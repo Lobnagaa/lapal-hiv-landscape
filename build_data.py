@@ -27,6 +27,9 @@ INDIC  = ['Treatment','Prevention','Both']
 # with no interval recorded at all; it pairs with the missing_frequency flag.
 FREQSRC = ['LAPaL record','derived from trials','manually confirmed','not stated']
 
+# Clinical phases in order, least to most advanced. Drives the phase chip ramp.
+PHASES = ['Preclinical','Phase I','Phase I/II','Phase II','Phase II/III','Phase III','Phase IV']
+
 ROUTE_FULL = {'PO':'Oral','SC':'Subcutaneous','IM':'Intramuscular','IV':'Intravenous',
               'VR':'Topical (Vaginal)','TD':'Transdermal'}
 FREQ_FULL  = {'1W':'Weekly','2W':'Every 2 weeks','1M':'Monthly','2M':'Every 2 months',
@@ -62,6 +65,17 @@ META = {
  'route_colours':{'PO':'#B66D00','TD':'#834300',
                   'SC':'#6975D8','IM':'#2C4FA2',
                   'IV':'#006B69','VR':'#009C84'},
+ # Highest clinical phase, shown as a chip beside the indication badge.
+ #
+ # An ORDERED progression, so it takes a single-hue ramp rather than categorical
+ # hues: darker reads as further along without needing a legend. Violet, at hue
+ # 293, is well clear of every other colour in use (nearest is the IM route blue
+ # at 264). Verified light-to-dark monotone, visible steps, and ink text at
+ # 4.7:1 or better on every step, so the label never depends on the tint.
+ 'phase_order':PHASES,
+ 'phase_colours':{'Preclinical':'#F1F0F7','Phase I':'#E4E1F1','Phase I/II':'#D5D0E9',
+                  'Phase II':'#C3BBDE','Phase II/III':'#AFA4D1','Phase III':'#9A8CC3',
+                  'Phase IV':'#8878B8'},
  'stage_tiers':{
     'Approved':{'colour':'#44B384','definition':'marketed in at least one jurisdiction'},
     'Late-stage':{'colour':'#EE7718','definition':'highest recorded phase II/III to III'},

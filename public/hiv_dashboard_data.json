@@ -45,6 +45,24 @@
    "IV": "#006B69",
    "VR": "#009C84"
   },
+  "phase_order": [
+   "Preclinical",
+   "Phase I",
+   "Phase I/II",
+   "Phase II",
+   "Phase II/III",
+   "Phase III",
+   "Phase IV"
+  ],
+  "phase_colours": {
+   "Preclinical": "#F1F0F7",
+   "Phase I": "#E4E1F1",
+   "Phase I/II": "#D5D0E9",
+   "Phase II": "#C3BBDE",
+   "Phase II/III": "#AFA4D1",
+   "Phase III": "#9A8CC3",
+   "Phase IV": "#8878B8"
+  },
   "stage_tiers": {
    "Approved": {
     "colour": "#44B384",

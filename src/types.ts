@@ -215,6 +215,14 @@ export interface Meta {
    * always printed, so a missing entry degrades rather than loses information.
    */
   route_colours?: Record<string, string>
+  /** Clinical phases in order, least to most advanced. */
+  phase_order?: string[]
+  /**
+   * Phase -> chip tint. A single-hue ramp, light to dark, so a darker chip
+   * reads as further along. Chip text is always ink, so a missing entry
+   * degrades to a plain chip rather than losing the label.
+   */
+  phase_colours?: Record<string, string>
   /**
    * How the default view is ordered.
    *   'grouped' (default) band and stage grouping, `order` decides within a stage.

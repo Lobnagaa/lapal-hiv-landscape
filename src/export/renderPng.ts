@@ -66,7 +66,9 @@ const CHROME = {
   // the first data row.
   axis: 36,
   legend: 40,
+  // Two key lines below the legend: routes, then the phase ramp.
   routeKey: 22,
+  phaseKey: 20,
   footerText: 68,
   ack: 76,
 }
@@ -83,14 +85,13 @@ function bodyTop(pad: number, hasLogo: boolean): number {
 }
 
 function footerHeight(hasAck: boolean): number {
-  return CHROME.routeKey + CHROME.footerText + (hasAck ? CHROME.ack : 0)
+  return CHROME.routeKey + CHROME.phaseKey + CHROME.footerText + (hasAck ? CHROME.ack : 0)
 }
 
 interface Cols {
   name: number
   plot: number
   route: number
-  phase: number
   dev: number
   gap: number
 }
@@ -100,11 +101,10 @@ function columns(W: number, pad: number): Cols {
   const usable = W - pad * 2
   // Proportional, so the slide layout is wider without redesigning anything.
   const route = 118
-  const phase = 100
-  const dev = Math.round(usable * 0.13)
-  const name = Math.round(usable * 0.25)
-  const plot = usable - name - route - phase - dev - gap * 4
-  return { name, plot, route, phase, dev, gap }
+  const dev = Math.round(usable * 0.15)
+  const name = Math.round(usable * 0.27)
+  const plot = usable - name - route - dev - gap * 3
+  return { name, plot, route, dev, gap }
 }
 
 export interface ExportOptions {
@@ -198,8 +198,7 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   const x0 = pad
   const xPlot = x0 + cols.name + cols.gap
   const xRoute = xPlot + cols.plot + cols.gap
-  const xPhase = xRoute + cols.route + cols.gap
-  const xDev = xPhase + cols.phase + cols.gap
+  const xDev = xRoute + cols.route + cols.gap
 
   const hasLogo = assets.logo !== null
   const top = bodyTop(pad, hasLogo)
@@ -251,7 +250,6 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   ctx.fillText('PRODUCT', x0, y + 16)
   ctx.fillText('DOSING INTERVAL', xPlot, y)
   ctx.fillText('ROUTE', xRoute, y + 16)
-  ctx.fillText('HIGHEST PHASE', xPhase, y + 16)
   ctx.fillText('DEVELOPER', xDev, y + 16)
   ctx.letterSpacing = '0px'
   ctx.font = `400 10px ${FONT}`
@@ -260,7 +258,6 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   // and that the phase is the most advanced trial on record.
   ctx.font = `400 9px ${FONT}`
   ctx.fillText('approved or investigated', xRoute, y + 27)
-  ctx.fillText('most advanced trial', xPhase, y + 27)
 
   ctx.textAlign = 'center'
   ctx.font = `400 11px ${MONO}`
@@ -342,6 +339,29 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
     ctx.letterSpacing = '0px'
     ctx.textAlign = 'left'
 
+    // Phase chip, immediately after the indication badge. Single-hue ramp, so a
+    // darker chip reads as further along; the label stays in ink.
+    if (entry.highest_phase) {
+      const label = entry.highest_phase.replace(/^Phase\s+/i, 'Ph ')
+      ctx.font = `700 9px ${FONT}`
+      const pw = ctx.measureText(label).width + 12
+      const px = badgeX + badgeW + 5
+      const tint = meta.phase_colours?.[entry.highest_phase]
+      if (tint) {
+        ctx.fillStyle = tint
+        roundRect(ctx, px, badgeY, pw, 14, 7)
+      } else {
+        ctx.strokeStyle = p.hairline
+        ctx.beginPath()
+        ctx.roundRect(px, badgeY, pw, 14, 7)
+        ctx.stroke()
+      }
+      ctx.fillStyle = tint ? p.ink : p.ink_soft
+      ctx.textAlign = 'center'
+      ctx.fillText(label, px + pw / 2, badgeY + 10)
+      ctx.textAlign = 'left'
+    }
+
     if (marks.span) {
       const bx = xPlot + geo.centre(marks.span.from)
       const bw = geo.centre(marks.span.to) - geo.centre(marks.span.from)
@@ -396,17 +416,6 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
       rx += w + 4
     }
 
-    // highest phase of any linked trial
-    ctx.font = `400 11px ${FONT}`
-    if (entry.highest_phase) {
-      ctx.fillStyle = p.ink
-      ctx.fillText(entry.highest_phase.replace(/^Phase\s+/i, ''), xPhase, mid + 4)
-    } else {
-      ctx.fillStyle = p.ink_soft
-      ctx.globalAlpha = 0.55
-      ctx.fillText('not stated', xPhase, mid + 4)
-      ctx.globalAlpha = 1
-    }
 
     ctx.font = `400 12px ${FONT}`
     ctx.fillStyle = p.ink_soft
@@ -509,6 +518,36 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
     ctx.fillStyle = p.ink
     ctx.fillText(label, kx + cw + 5, y)
     kx += cw + 5 + ctx.measureText(label).width + 16
+  }
+
+  /* ---- phase key ---- */
+  // The ramp is only meaningful if the reader knows darker means further along,
+  // and an exported slide is read away from the dashboard legend.
+  const phasesHere = (meta.phase_order ?? []).filter((ph) => rows.some((e) => e.highest_phase === ph))
+  if (phasesHere.length) {
+    y += 18
+    ctx.font = `600 9px ${FONT}`
+    ctx.fillStyle = p.ink_soft
+    ctx.letterSpacing = '1.2px'
+    const phaseLabel = 'HIGHEST PHASE'
+    ctx.fillText(phaseLabel, x0, y)
+    let px = x0 + ctx.measureText(phaseLabel).width + 20
+    ctx.letterSpacing = '0px'
+    for (const ph of phasesHere) {
+      const label = ph.replace(/^Phase\s+/i, 'Ph ')
+      ctx.font = `700 9px ${FONT}`
+      const w = ctx.measureText(label).width + 12
+      ctx.fillStyle = meta.phase_colours?.[ph] ?? p.hairline
+      roundRect(ctx, px, y - 9, w, 13, 6.5)
+      ctx.fillStyle = p.ink
+      ctx.textAlign = 'center'
+      ctx.fillText(label, px + w / 2, y)
+      ctx.textAlign = 'left'
+      px += w + 6
+    }
+    ctx.font = `400 9px ${FONT}`
+    ctx.fillStyle = p.ink_soft
+    ctx.fillText('darker is further along', px + 8, y)
   }
 
   /* ---- acknowledgements ---- */

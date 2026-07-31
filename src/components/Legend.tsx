@@ -29,6 +29,11 @@ export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
   const stagesPresent = Object.keys(meta.stage_tiers).filter((s) =>
     entries.some((e) => e.stage === s),
   )
+  // In ramp order, and only the phases actually on screen, same rule as the
+  // rest of this legend.
+  const phasesPresent = (meta.phase_order ?? []).filter((ph) =>
+    entries.some((e) => e.highest_phase === ph),
+  )
 
   return (
     <div className="border-b border-hairline py-4">
@@ -130,6 +135,30 @@ export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
             </span>
           ))}
         </p>
+
+        {phasesPresent.length > 0 && (
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Highest phase
+            </span>
+            <span className="flex flex-wrap items-center gap-1.5">
+              {phasesPresent.map((ph) => (
+                <span
+                  key={ph}
+                  title={`Most advanced trial on record: ${ph}`}
+                  className="rounded-full px-1.5 py-px text-[9px] font-semibold tracking-[0.04em] whitespace-nowrap"
+                  style={{ background: meta.phase_colours?.[ph], color: 'var(--color-ink)' }}
+                >
+                  {ph.replace(/^Phase\s+/i, 'Ph ')}
+                </span>
+              ))}
+            </span>
+            <span>
+              the most advanced clinical trial on record for that entry. Darker is further along.
+              No chip means none is recorded.
+            </span>
+          </p>
+        )}
 
         {meta.dosing_axis_note && (
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] leading-relaxed text-ink-soft">

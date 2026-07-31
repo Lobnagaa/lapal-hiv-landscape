@@ -61,9 +61,34 @@ function routeChipStyle(meta: Meta, code: string) {
   }
 }
 
-const GRID_WIDE =
-  '52px minmax(170px, 1.25fr) minmax(280px, 2.3fr) 108px 96px minmax(110px, 0.85fr)'
-const GRID_NARROW = '52px minmax(140px, 1.2fr) minmax(210px, 2.1fr) 96px 88px'
+/**
+ * Chip for the highest clinical phase on record.
+ *
+ * Phase is an ordered progression, so meta.phase_colours is a single-hue ramp
+ * rather than a set of categorical hues: a darker chip reads as further along
+ * without needing a legend. The label is always ink, so the tint is a scanning
+ * aid and never the only thing carrying the value.
+ */
+function PhaseChip({ meta, phase }: { meta: Meta; phase: string | null }) {
+  if (!phase) return null
+  const tint = meta.phase_colours?.[phase]
+  return (
+    <span
+      title={`Most advanced trial on record: ${phase}`}
+      className="shrink-0 rounded-full px-1.5 py-px text-[9px] font-semibold tracking-[0.04em] whitespace-nowrap"
+      style={
+        tint
+          ? { background: tint, color: 'var(--color-ink)' }
+          : { border: '1px solid var(--color-hairline)', color: 'var(--color-ink-soft)' }
+      }
+    >
+      {phase.replace(/^Phase\s+/i, 'Ph ')}
+    </span>
+  )
+}
+
+const GRID_WIDE = '52px minmax(200px, 1.4fr) minmax(300px, 2.4fr) 108px minmax(120px, 0.9fr)'
+const GRID_NARROW = '52px minmax(150px, 1.25fr) minmax(230px, 2.2fr) 96px'
 
 export interface TimelineControls {
   /**
@@ -289,12 +314,6 @@ function AxisHeader({
           approved or investigated
         </span>
       </div>
-      <div className="text-[10px] leading-tight font-semibold tracking-[0.14em] text-ink-soft uppercase">
-        Highest phase
-        <span className="block text-[9px] font-normal tracking-normal normal-case opacity-80">
-          most advanced trial
-        </span>
-      </div>
       {wide && (
         <div className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
           Developer
@@ -492,6 +511,7 @@ function EntryRow({
           {entry.name_full}
         </span>
         <IndicationBadge badge={badge} />
+        <PhaseChip meta={meta} phase={entry.highest_phase} />
         {href && (
           <button
             type="button"
@@ -574,15 +594,6 @@ function EntryRow({
             {r}
           </span>
         ))}
-      </div>
-
-      {/* highest phase of any linked trial */}
-      <div className="text-[11px] leading-tight text-ink-soft" title={entry.highest_phase ?? undefined}>
-        {entry.highest_phase ? (
-          <span className="text-ink">{entry.highest_phase.replace(/^Phase\s+/i, '')}</span>
-        ) : (
-          <span className="opacity-45">not stated</span>
-        )}
       </div>
 
       {/* developer */}
