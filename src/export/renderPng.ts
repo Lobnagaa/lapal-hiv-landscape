@@ -61,7 +61,10 @@ const CHROME = {
   logoGap: 18,
   title: 32,
   subtitle: 44,
-  axis: 26,
+  // Tick labels sit at +16 and the column captions at +27, so the rule beneath
+  // the header needs to clear both. Too small here and the caption overprints
+  // the first data row.
+  axis: 36,
   legend: 40,
   routeKey: 22,
   footerText: 68,
@@ -87,6 +90,7 @@ interface Cols {
   name: number
   plot: number
   route: number
+  phase: number
   dev: number
   gap: number
 }
@@ -96,10 +100,11 @@ function columns(W: number, pad: number): Cols {
   const usable = W - pad * 2
   // Proportional, so the slide layout is wider without redesigning anything.
   const route = 118
-  const dev = Math.round(usable * 0.15)
-  const name = Math.round(usable * 0.26)
-  const plot = usable - name - route - dev - gap * 3
-  return { name, plot, route, dev, gap }
+  const phase = 100
+  const dev = Math.round(usable * 0.13)
+  const name = Math.round(usable * 0.25)
+  const plot = usable - name - route - phase - dev - gap * 4
+  return { name, plot, route, phase, dev, gap }
 }
 
 export interface ExportOptions {
@@ -193,7 +198,8 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   const x0 = pad
   const xPlot = x0 + cols.name + cols.gap
   const xRoute = xPlot + cols.plot + cols.gap
-  const xDev = xRoute + cols.route + cols.gap
+  const xPhase = xRoute + cols.route + cols.gap
+  const xDev = xPhase + cols.phase + cols.gap
 
   const hasLogo = assets.logo !== null
   const top = bodyTop(pad, hasLogo)
@@ -245,10 +251,16 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   ctx.fillText('PRODUCT', x0, y + 16)
   ctx.fillText('DOSING INTERVAL', xPlot, y)
   ctx.fillText('ROUTE', xRoute, y + 16)
+  ctx.fillText('HIGHEST PHASE', xPhase, y + 16)
   ctx.fillText('DEVELOPER', xDev, y + 16)
   ctx.letterSpacing = '0px'
   ctx.font = `400 10px ${FONT}`
   ctx.fillText('W = weeks, M = months · ordinal, not to scale', xPlot + 108, y)
+  // Captions clarifying that the route is either approved or merely studied,
+  // and that the phase is the most advanced trial on record.
+  ctx.font = `400 9px ${FONT}`
+  ctx.fillText('approved or investigated', xRoute, y + 27)
+  ctx.fillText('most advanced trial', xPhase, y + 27)
 
   ctx.textAlign = 'center'
   ctx.font = `400 11px ${MONO}`
@@ -357,18 +369,43 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
       ctx.lineWidth = 1
     }
 
+    // Route chips, tinted per route. The tint is fill and border only; the
+    // letters stay in ink so the code never depends on the colour.
     let rx = xRoute
     ctx.font = `400 10px ${MONO}`
     for (const r of entry.routes) {
       const w = ctx.measureText(r).width + 10
       if (rx + w > xRoute + cols.route) break
-      ctx.strokeStyle = p.hairline
+      const tint = meta.route_colours?.[r]
       ctx.beginPath()
       ctx.roundRect(rx, mid - 8, w, 15, 2)
-      ctx.stroke()
-      ctx.fillStyle = p.ink_soft
+      if (tint) {
+        ctx.globalAlpha = 0.14
+        ctx.fillStyle = tint
+        ctx.fill()
+        ctx.globalAlpha = 0.45
+        ctx.strokeStyle = tint
+        ctx.stroke()
+        ctx.globalAlpha = 1
+      } else {
+        ctx.strokeStyle = p.hairline
+        ctx.stroke()
+      }
+      ctx.fillStyle = tint ? p.ink : p.ink_soft
       ctx.fillText(r, rx + 5, mid + 3)
       rx += w + 4
+    }
+
+    // highest phase of any linked trial
+    ctx.font = `400 11px ${FONT}`
+    if (entry.highest_phase) {
+      ctx.fillStyle = p.ink
+      ctx.fillText(entry.highest_phase.replace(/^Phase\s+/i, ''), xPhase, mid + 4)
+    } else {
+      ctx.fillStyle = p.ink_soft
+      ctx.globalAlpha = 0.55
+      ctx.fillText('not stated', xPhase, mid + 4)
+      ctx.globalAlpha = 1
     }
 
     ctx.font = `400 12px ${FONT}`
@@ -456,9 +493,18 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   ctx.letterSpacing = '0px'
   for (const [code, label] of Object.entries(meta.route_legend)) {
     ctx.font = `400 9px ${MONO}`
-    ctx.fillStyle = p.ink_soft
-    ctx.fillText(code, kx, y)
+    const tint = meta.route_colours?.[code]
     const cw = ctx.measureText(code).width
+    if (tint) {
+      ctx.globalAlpha = 0.16
+      ctx.fillStyle = tint
+      ctx.beginPath()
+      ctx.roundRect(kx - 3, y - 8, cw + 6, 12, 2)
+      ctx.fill()
+      ctx.globalAlpha = 1
+    }
+    ctx.fillStyle = tint ? p.ink : p.ink_soft
+    ctx.fillText(code, kx, y)
     ctx.font = `400 10px ${FONT}`
     ctx.fillStyle = p.ink
     ctx.fillText(label, kx + cw + 5, y)

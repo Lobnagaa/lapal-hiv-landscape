@@ -210,6 +210,12 @@ export interface Meta {
   /** Heading for the route key, e.g. "Investigated and/or approved routes...". */
   route_legend_label?: string
   /**
+   * Route code -> tint colour for the chips. Optional: without it the chips
+   * render in the neutral hairline style. Colour is redundant here, the code is
+   * always printed, so a missing entry degrades rather than loses information.
+   */
+  route_colours?: Record<string, string>
+  /**
    * How the default view is ordered.
    *   'grouped' (default) band and stage grouping, `order` decides within a stage.
    *   'manual'  no grouping, one flat list in `order` sequence.

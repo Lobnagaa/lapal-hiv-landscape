@@ -112,7 +112,18 @@ export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
           </span>
           {Object.entries(meta.route_legend).map(([code, label]) => (
             <span key={code} className="whitespace-nowrap">
-              <span className="rounded-sm border border-hairline px-1 py-px font-mono text-[10px] text-ink-soft">
+              <span
+                className="rounded-sm border px-1 py-px font-mono text-[10px]"
+                style={
+                  meta.route_colours?.[code]
+                    ? {
+                        background: `color-mix(in srgb, ${meta.route_colours[code]} 14%, transparent)`,
+                        borderColor: `color-mix(in srgb, ${meta.route_colours[code]} 45%, transparent)`,
+                        color: 'var(--color-ink)',
+                      }
+                    : { borderColor: 'var(--color-hairline)', color: 'var(--color-ink-soft)' }
+                }
+              >
                 {code}
               </span>{' '}
               <span className="text-ink">{label}</span>

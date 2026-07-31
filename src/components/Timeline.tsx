@@ -43,8 +43,27 @@ function safeUrl(url: string | null): string | null {
   }
 }
 
-const GRID_WIDE = '52px minmax(180px, 1.3fr) minmax(300px, 2.4fr) 108px minmax(120px, 0.9fr)'
-const GRID_NARROW = '52px minmax(140px, 1.2fr) minmax(220px, 2.2fr) 96px'
+/**
+ * Tint for one route chip.
+ *
+ * The colour is the chip's fill and border only; the letters stay in ink. That
+ * keeps the code legible whatever the tint, so colour is a scanning aid rather
+ * than something the reader has to decode. Falls back to the neutral hairline
+ * style when meta carries no colour for a route.
+ */
+function routeChipStyle(meta: Meta, code: string) {
+  const c = meta.route_colours?.[code]
+  if (!c) return { borderColor: 'var(--color-hairline)', color: 'var(--color-ink-soft)' }
+  return {
+    background: `color-mix(in srgb, ${c} 14%, transparent)`,
+    borderColor: `color-mix(in srgb, ${c} 45%, transparent)`,
+    color: 'var(--color-ink)',
+  }
+}
+
+const GRID_WIDE =
+  '52px minmax(170px, 1.25fr) minmax(280px, 2.3fr) 108px 96px minmax(110px, 0.85fr)'
+const GRID_NARROW = '52px minmax(140px, 1.2fr) minmax(210px, 2.1fr) 96px 88px'
 
 export interface TimelineControls {
   /**
@@ -264,7 +283,18 @@ function AxisHeader({
         )}
       </div>
 
-      <div className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">Route</div>
+      <div className="text-[10px] leading-tight font-semibold tracking-[0.14em] text-ink-soft uppercase">
+        Route
+        <span className="block text-[9px] font-normal tracking-normal normal-case opacity-80">
+          approved or investigated
+        </span>
+      </div>
+      <div className="text-[10px] leading-tight font-semibold tracking-[0.14em] text-ink-soft uppercase">
+        Highest phase
+        <span className="block text-[9px] font-normal tracking-normal normal-case opacity-80">
+          most advanced trial
+        </span>
+      </div>
       {wide && (
         <div className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
           Developer
@@ -538,11 +568,21 @@ function EntryRow({
           <span
             key={r}
             title={entry.routes_full[i] ?? meta.route_legend[r]}
-            className="rounded-sm border border-hairline px-1 py-px font-mono text-[10px] tracking-wide text-ink-soft"
+            className="rounded-sm border px-1 py-px font-mono text-[10px] tracking-wide"
+            style={routeChipStyle(meta, r)}
           >
             {r}
           </span>
         ))}
+      </div>
+
+      {/* highest phase of any linked trial */}
+      <div className="text-[11px] leading-tight text-ink-soft" title={entry.highest_phase ?? undefined}>
+        {entry.highest_phase ? (
+          <span className="text-ink">{entry.highest_phase.replace(/^Phase\s+/i, '')}</span>
+        ) : (
+          <span className="opacity-45">not stated</span>
+        )}
       </div>
 
       {/* developer */}

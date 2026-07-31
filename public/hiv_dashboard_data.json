@@ -37,6 +37,14 @@
    "TD": "transdermal"
   },
   "route_legend_label": "Investigated and/or approved routes of administration",
+  "route_colours": {
+   "PO": "#B66D00",
+   "TD": "#834300",
+   "SC": "#6975D8",
+   "IM": "#2C4FA2",
+   "IV": "#006B69",
+   "VR": "#009C84"
+  },
   "stage_tiers": {
    "Approved": {
     "colour": "#44B384",

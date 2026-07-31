@@ -53,6 +53,15 @@ META = {
  'route_legend':{'PO':'oral','SC':'subcutaneous','IM':'intramuscular','IV':'intravenous',
                  'VR':'vaginal ring','TD':'transdermal'},
  'route_legend_label':'Investigated and/or approved routes of administration',
+ # One tint per route, so a reader can scan the column without reading every
+ # code. Chosen by optimising the worst-case colour-vision-deficient separation
+ # across all fifteen pairs: min OKLab dE 12.0 under protanopia and deuteranopia,
+ # against a target of 8. Three hue families at two lightnesses each, which also
+ # groups sensibly: amber = non-injection, blue = tissue injection, teal = IV and
+ # ring. The chip letters stay in ink, so nothing depends on colour alone.
+ 'route_colours':{'PO':'#B66D00','TD':'#834300',
+                  'SC':'#6975D8','IM':'#2C4FA2',
+                  'IV':'#006B69','VR':'#009C84'},
  'stage_tiers':{
     'Approved':{'colour':'#44B384','definition':'marketed in at least one jurisdiction'},
     'Late-stage':{'colour':'#EE7718','definition':'highest recorded phase II/III to III'},
