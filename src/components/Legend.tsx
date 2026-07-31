@@ -1,0 +1,165 @@
+/**
+ * How to read the timeline.
+ *
+ * The legend describes what is ACTUALLY ON SCREEN, not the full vocabulary.
+ * A key for a mark that appears nowhere is worse than no key at all: it tells
+ * the reader to go looking for something that is not there. So each entry
+ * below is conditional on the currently filtered set, and the legend shrinks
+ * as the data is curated or filtered.
+ *
+ * Stage colours and definitions come from meta.stage_tiers; the notes come from
+ * meta.encoding_notes, so the data file can speak for itself.
+ */
+import { useState } from 'react'
+import type { ReactNode } from 'react'
+import type { Entry, Meta } from '../types'
+import { BAR_H, BAR_OPACITY, DOT_R, rowMarks } from '../encoding'
+import { stageVar } from '../theme'
+
+export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
+  const [open, setOpen] = useState(false)
+
+  // What marks does the current view actually contain?
+  const marks = entries.map((e) => rowMarks(e, meta))
+  const present = {
+    dot: marks.some((m) => m.dotIndices.length > 0),
+    range: marks.some((m) => m.span !== null),
+    notStated: marks.some((m) => m.notStated),
+  }
+  const stagesPresent = Object.keys(meta.stage_tiers).filter((s) =>
+    entries.some((e) => e.stage === s),
+  )
+
+  return (
+    <div className="border-b border-hairline py-4">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        {stagesPresent.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Stage
+            </span>
+            {stagesPresent.map((stage) => (
+              <span key={stage} className="flex items-center gap-1.5" title={meta.stage_tiers[stage]?.definition}>
+                <span
+                  aria-hidden
+                  className="inline-block size-2.5 rounded-full"
+                  style={{ background: stageVar(stage) }}
+                />
+                <span className="text-[12px] text-ink">{stage}</span>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <span className="hidden h-4 w-px bg-hairline sm:block" />
+
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {present.dot && (
+            <MarkKey label="stated interval">
+              <circle cx={11} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+            </MarkKey>
+          )}
+          {present.range && (
+            <MarkKey label="range studied">
+              <rect
+                x={3}
+                y={9 - BAR_H / 2}
+                width={16}
+                height={BAR_H}
+                rx={BAR_H / 2}
+                fill="var(--color-ink-soft)"
+                opacity={BAR_OPACITY}
+              />
+              <circle cx={3} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+              <circle cx={19} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+            </MarkKey>
+          )}
+          {present.notStated && (
+            <MarkKey label="not stated">
+              <circle
+                cx={11}
+                cy={9}
+                r={DOT_R}
+                fill="var(--color-paper)"
+                stroke="var(--color-ink-soft)"
+                strokeWidth={1.6}
+              />
+            </MarkKey>
+          )}
+        </div>
+
+        <span className="flex-1" />
+
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="text-[12px] text-accent underline underline-offset-4 hover:opacity-70"
+          aria-expanded={open}
+        >
+          {open ? 'Hide notes on the encoding' : 'How to read this'}
+        </button>
+      </div>
+
+      {/*
+        The route codes and the interval codes are not self-explanatory, and
+        putting them only in the hover card left them undefined for anyone
+        reading the chart rather than probing it. Both keys are always visible.
+      */}
+      <div className="mt-3 space-y-1.5 border-t border-hairline pt-3">
+        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+          <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            {meta.route_legend_label ?? 'Routes of administration'}
+          </span>
+          {Object.entries(meta.route_legend).map(([code, label]) => (
+            <span key={code} className="whitespace-nowrap">
+              <span className="rounded-sm border border-hairline px-1 py-px font-mono text-[10px] text-ink-soft">
+                {code}
+              </span>{' '}
+              <span className="text-ink">{label}</span>
+            </span>
+          ))}
+        </p>
+
+        {meta.dosing_axis_note && (
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] leading-relaxed text-ink-soft">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Dosing interval
+            </span>
+            <span className="max-w-4xl">{meta.dosing_axis_note}</span>
+          </p>
+        )}
+      </div>
+
+      {open && (
+        <ul className="mt-4 max-w-3xl space-y-1.5 border-l-2 border-hairline pl-4">
+          {meta.encoding_notes.map((note, i) => (
+            <li key={i} className="text-[13px] leading-relaxed text-ink-soft">
+              {note}
+            </li>
+          ))}
+          {present.range && (
+            <li className="text-[13px] leading-relaxed text-ink-soft">
+              Where several intervals are studied but one in between is not recorded, the bar
+              spans the full range and the missing interval shows as bar without a dot.
+            </li>
+          )}
+          <li className="text-[13px] leading-relaxed text-ink-soft">
+            This key lists only the marks present in the current selection, so it changes as you
+            filter.
+          </li>
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function MarkKey({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <svg width={22} height={18} aria-hidden className="shrink-0">
+        {children}
+      </svg>
+      <span className="text-[12px] text-ink-soft">{label}</span>
+    </span>
+  )
+}

@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+/**
+ * Design tokens.
+ *
+ * The values below are FALLBACKS only. On load, applyPalette() in theme.ts
+ * overwrites these same custom properties from meta.palette, so the JSON stays
+ * authoritative for colour and nothing is hard-coded in two places.
+ *
+ * Because Tailwind v4 compiles its utilities against these custom properties,
+ * overriding the property at runtime re-colours every `bg-paper`, `text-ink`
+ * and so on, with no re-render or class swapping.
+ */
+@theme {
+  --color-ink: #12161c;
+  --color-ink-soft: #5a6472;
+  --color-hairline: #dfe3e8;
+  --color-paper: #fbfaf7;
+  --color-flag: #a21c7a;
+
+  /* Indication accents. --color-accent is whichever of the two is in scope. */
+  --color-treatment: #153f8f;
+  --color-prevention: #a21c7a;
+  --color-accent: #153f8f;
+
+  --font-sans:
+    'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Stage colours are set per stage at runtime as --stage-<slug>; see theme.ts. */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Keep focus visible for keyboard users without ringing every mouse click. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* The dashboard is dense; respect a reduced-motion preference completely. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,25 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+.vite/
+*.tsbuildinfo
+
+# Timestamped safety copies made before a scripted edit. Local only: git is the
+# version history once the workbook is committed.
+hiv_curation.backup-*.xlsx
+
+# The single-file review copy is a build artefact, regenerated on demand.
+HIV-dashboard-review.html
+
+# ---------------------------------------------------------------------------
+# hiv_curation.xlsx IS committed, deliberately.
+#
+# It is the source of truth, and the deploy workflow regenerates
+# hiv_dashboard_data.json from it on every push. That means a validation error
+# fails the build instead of reaching the site, and the workbook and the
+# published data can never drift apart.
+#
+# Note this makes the curator_notes and exclude_reason columns public along
+# with everything else. Keep genuinely private working notes elsewhere.
+# ---------------------------------------------------------------------------

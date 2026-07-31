@@ -1,0 +1,71 @@
+# Builds the dashboard and publishes it to GitHub Pages on every push to main.
+#
+# The data is regenerated from hiv_curation.xlsx here, not taken from the
+# committed JSON, so the workbook stays the single source of truth all the way
+# to the server. The useful consequence: build_data.py's validation runs in CI,
+# so a bad edit fails the deploy and the live site keeps the last good version
+# rather than breaking.
+#
+# To update the dashboard: edit the workbook, commit it, push. Nothing else.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you redeploy from the Actions tab without making a commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race. Queue rather than cancel, so a push during a
+# deploy still ends up published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---- regenerate the data from the workbook --------------------------
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install openpyxl
+
+      # Fails the whole deploy if the workbook has an invalid row, which is the
+      # point: the live site keeps the last good version instead of breaking.
+      - name: Build hiv_dashboard_data.json from the workbook
+        run: python build_data.py hiv_curation.xlsx public/hiv_dashboard_data.json
+
+      # ---- build the site --------------------------------------------------
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # ci rather than install: installs exactly the locked versions, so the
+      # site cannot quietly change because a dependency published an update.
+      - run: npm ci
+
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

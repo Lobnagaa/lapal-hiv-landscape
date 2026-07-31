@@ -1,0 +1,1858 @@
+{
+ "meta": {
+  "title": "HIV long-acting therapeutics landscape",
+  "intro": "Formulations, technologies, agents and regimens in the HIV long-acting space. Researched and approved candidates, for treatment and prevention are shown, placed on an ordinal dosing-interval axis. Live counts for the current selection are below.",
+  "source": "Curated in hiv_curation.xlsx (Entries tab), built from LAPaL database extracts.",
+  "record_bands": {
+   "formulations": "Candidate or approved regimens and formulations",
+   "compounds": "Underlying agents researched or approved for use in HIV long-acting therapeutics"
+  },
+  "dosing_axis_order": [
+   "1W",
+   "2W",
+   "1M",
+   "2M",
+   "3M",
+   "4M",
+   "6M",
+   "12M"
+  ],
+  "dosing_axis_labels": {
+   "1W": "Weekly",
+   "2W": "Every 2 weeks",
+   "1M": "Monthly",
+   "2M": "Every 2 months",
+   "3M": "Every 3 months",
+   "4M": "Every 4 months",
+   "6M": "Every 6 months",
+   "12M": "Yearly"
+  },
+  "dosing_axis_note": "W = weeks, M = months, so 1W is weekly and 12M is yearly. The axis is ordinal, not to scale. An entry with no dosing interval on record sits in the separate \"not stated\" lane at the right of the axis.",
+  "route_legend": {
+   "PO": "oral",
+   "SC": "subcutaneous",
+   "IM": "intramuscular",
+   "IV": "intravenous",
+   "VR": "vaginal ring",
+   "TD": "transdermal"
+  },
+  "route_legend_label": "Investigated and/or approved routes of administration",
+  "stage_tiers": {
+   "Approved": {
+    "colour": "#44B384",
+    "definition": "marketed in at least one jurisdiction"
+   },
+   "Late-stage": {
+    "colour": "#EE7718",
+    "definition": "highest recorded phase II/III to III"
+   },
+   "Early-stage": {
+    "colour": "#0BBBEF",
+    "definition": "preclinical to phase II"
+   },
+   "Not stated": {
+    "colour": "#9AA3AE",
+    "definition": "no interval or stage recorded in LAPaL"
+   }
+  },
+  "palette": {
+   "treatment_accent": "#153F8F",
+   "prevention_accent": "#A21C7A",
+   "ink": "#12161C",
+   "ink_soft": "#5A6472",
+   "hairline": "#E4E7EB",
+   "paper": "#FFFFFF",
+   "flag": "#A21C7A"
+  },
+  "acknowledgements": [
+   {
+    "heading": "Hosted and coordinated by",
+    "logos": [
+     {
+      "file": "mpp.png",
+      "alt": "Medicines Patent Pool"
+     }
+    ]
+   },
+   {
+    "heading": "In collaboration with",
+    "logos": [
+     {
+      "file": "liverpool.png",
+      "alt": "University of Liverpool"
+     },
+     {
+      "file": "celt.png",
+      "alt": "CELT"
+     }
+    ]
+   },
+   {
+    "heading": "With support from",
+    "logos": [
+     {
+      "file": "unitaid.png",
+      "alt": "Unitaid"
+     },
+     {
+      "file": "leap.png",
+      "alt": "Leap"
+     },
+     {
+      "file": "coefficient-giving.png",
+      "alt": "Coefficient Giving"
+     }
+    ]
+   }
+  ],
+  "brand_logo": "logos/lapal.png",
+  "brand_url": "lapal.ch",
+  "default_order_mode": "grouped",
+  "typeface": "Manrope",
+  "encoding_notes": [
+   "Dosing axis is ordinal, not to scale.",
+   "A dot marks each stated interval; a bar connects the range where several are studied.",
+   "missing_frequency entries sit in a dedicated not-stated lane.",
+   "frequency_derived_from_trials entries need curator confirmation (shown with a dagger).",
+   "conventional_approval_only marks a molecule approved in a conventional non-LA form.",
+   "Daily and single-dose values are excluded as not long-acting."
+  ],
+  "dual_use_note": "Entries indicated for both treatment and prevention appear once, tagged Both.",
+  "disclaimer": "LAPaL reflects a curated snapshot at a point in time. Efforts are put to refresh content on a rolling basis as new public information appears.",
+  "curation": {
+   "excluded_count": 0,
+   "excluded": []
+  },
+  "known_data_issues": [
+   "6 entries have no recorded dosing interval.",
+   "Approved but missing regulatory rows: Dapivirine ring monthly."
+  ]
+ },
+ "entries": [
+  {
+   "id": "f001",
+   "band": "formulations",
+   "name_full": "Lenacapavir 6-Monthly",
+   "routes": [
+    "PO",
+    "SC"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Approved",
+   "highest_phase": null,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": null,
+   "lapal_url": "https://lapal.ch/formulations/lenacapavir-6-monthly",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f002",
+   "band": "formulations",
+   "name_full": "CAB 6 times a year (CAB-LA)",
+   "routes": [
+    "PO",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M",
+    "2M"
+   ],
+   "frequencies_full": [
+    "Monthly",
+    "Every 2 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Approved",
+   "highest_phase": null,
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/cab-la-cabotegravir-2-monthly",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f003",
+   "band": "formulations",
+   "name_full": "Rilpivirine 2-monthly",
+   "routes": [
+    "PO",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "2M"
+   ],
+   "frequencies_full": [
+    "Every 2 months"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Approved",
+   "highest_phase": null,
+   "developers_full": [
+    "Johnson & Johnson"
+   ],
+   "drug_class": "NNRTI",
+   "lapal_url": "https://lapal.ch/formulations/rilpivirine-2-monthly",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f004",
+   "band": "formulations",
+   "name_full": "Cabotegravir + Rilpivirine",
+   "routes": [
+    "PO",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M",
+    "2M"
+   ],
+   "frequencies_full": [
+    "Monthly",
+    "Every 2 months"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Approved",
+   "highest_phase": "Phase IV",
+   "developers_full": [
+    "ViiV Healthcare",
+    "Johnson & Johnson"
+   ],
+   "drug_class": "INSTI+NNRTI",
+   "lapal_url": "https://lapal.ch/formulations/cabotegravir-rilpivirine",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f005",
+   "band": "formulations",
+   "name_full": "Lotivibart (N6LS) (VH3810109) (mAb)",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "4M",
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 4 months",
+    "Every 6 months"
+   ],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "lapal_url": "https://lapal.ch/formulations/lotivibart-n6ls-vh3810109-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f006",
+   "band": "formulations",
+   "name_full": "Teropavimab + Zinlirvimab",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "2 bNAbs targeting gp120 on HIV-1 envelope",
+   "lapal_url": "https://lapal.ch/formulations/teropavimab-zinlirvimab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f007",
+   "band": "formulations",
+   "name_full": "Tenofovir-Lamivudine-Dolutegravir (TLD) - long-acting injectable (LAI)",
+   "routes": [
+    "SC"
+   ],
+   "routes_full": [
+    "Subcutaneous"
+   ],
+   "frequencies": [
+    "2W",
+    "1M"
+   ],
+   "frequencies_full": [
+    "Every 2 weeks",
+    "Monthly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "University of Washington"
+   ],
+   "drug_class": "2 NRTIs (TDF/3TC) +1 INSTI (DTG)",
+   "lapal_url": "https://lapal.ch/formulations/tenofovir-lamivudine-dolutegravir-tld-long-acting-injectable-lai-tld-lai",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f008",
+   "band": "formulations",
+   "name_full": "Ibalizumab",
+   "routes": [
+    "SC",
+    "IM",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Approved",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Theratechnologies",
+    "TaiMed Biologics"
+   ],
+   "drug_class": "mAb targeting gp120-CD4 complex",
+   "lapal_url": "https://lapal.ch/formulations/ibalizumab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f009",
+   "band": "formulations",
+   "name_full": "Budigalimab",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "2W",
+    "1M"
+   ],
+   "frequencies_full": [
+    "Every 2 weeks",
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "AbbVie"
+   ],
+   "drug_class": "mAb anti-PD1",
+   "lapal_url": "https://lapal.ch/formulations/budigalimab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f010",
+   "band": "formulations",
+   "name_full": "VRC07-523LS (mAb)",
+   "routes": [
+    "SC",
+    "IM",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "3M"
+   ],
+   "frequencies_full": [
+    "Every 3 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "NIAID"
+   ],
+   "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "lapal_url": "https://lapal.ch/formulations/vrc07-523ls-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f011",
+   "band": "formulations",
+   "name_full": "Bictegravir LA",
+   "routes": [
+    "SC",
+    "IM",
+    "TD"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular",
+    "Transdermal"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "Centre of Excellence for Long-acting Therapeutics",
+    "University of Nebraska Medical Center",
+    "Creighton University",
+    "Queen’s University Belfast",
+    "University of Liverpool"
+   ],
+   "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/bictegravir-la",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f012",
+   "band": "formulations",
+   "name_full": "Cabotegravir + Lenacapavir",
+   "routes": [
+    "PO",
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M",
+    "2M"
+   ],
+   "frequencies_full": [
+    "Monthly",
+    "Every 2 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "ViiV Healthcare",
+    "Gilead"
+   ],
+   "drug_class": "INSTI+capsid inhibitor",
+   "lapal_url": "https://lapal.ch/formulations/cabotegravir-lenacapavir",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f013",
+   "band": "formulations",
+   "name_full": "MK-8591D (Islatravir and Lenacapavir)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Merck / MSD",
+    "Gilead"
+   ],
+   "drug_class": "NRTTI + capsid inhibitor",
+   "lapal_url": "https://lapal.ch/formulations/mk-8591d-islatravir-and-lenacapavir",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f014",
+   "band": "formulations",
+   "name_full": "Cabotegravir 3 times a year (CAB 4M)",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "4M"
+   ],
+   "frequencies_full": [
+    "Every 4 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/cabotegravir-4-monthly-q4m",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f015",
+   "band": "formulations",
+   "name_full": "Rilpivirine Prodrug Nanoformulation (NM3RPV)",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "3M"
+   ],
+   "frequencies_full": [
+    "Every 3 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "University of Nebraska Medical Center",
+    "Exavir Therapeutics"
+   ],
+   "drug_class": "prodrug of rilpivirine (non-nucleoside reverse transcriptase inhibitor (NNRTI))",
+   "lapal_url": "https://lapal.ch/formulations/rilpivirine-prodrug-nanoformulation-nm3rpv",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f016",
+   "band": "formulations",
+   "name_full": "Ultra Long-Acting Tenofovir ProTide",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "Exavir Therapeutics"
+   ],
+   "drug_class": "prodrug of tenofovir (nucleotide analog reverse-transcriptase inhibitor (NRTI))",
+   "lapal_url": "https://lapal.ch/formulations/bictegravir-la",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f017",
+   "band": "formulations",
+   "name_full": "Lenacapavir Once-Yearly",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "12M"
+   ],
+   "frequencies_full": [
+    "Yearly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/formulations/lenacapavir-once-yearly",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Prevention",
+   "is_treatment": false,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f018",
+   "band": "formulations",
+   "name_full": "cabotegravir PH20",
+   "routes": [
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/cabotegravir-ph20",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f019",
+   "band": "formulations",
+   "name_full": "VRC01 (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "2W",
+    "1M",
+    "2M",
+    "3M"
+   ],
+   "frequencies_full": [
+    "Every 2 weeks",
+    "Monthly",
+    "Every 2 months",
+    "Every 3 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "NIAID"
+   ],
+   "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "lapal_url": "https://lapal.ch/formulations/vrc01-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f020",
+   "band": "formulations",
+   "name_full": "MK-8591B (islatravir + ulonivirine)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "Merck / MSD"
+   ],
+   "drug_class": "NRTTI+NNRTI",
+   "lapal_url": "https://lapal.ch/formulations/mk-8591b-islatravir-ulonivirine",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f021",
+   "band": "formulations",
+   "name_full": "VH-280 (VH-4004280)",
+   "routes": [
+    "PO",
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/formulations/vh-280-vh-4004280",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f022",
+   "band": "formulations",
+   "name_full": "PGT-121 (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "Beth Israel Deaconess Medical Center",
+    "IAVI"
+   ],
+   "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "lapal_url": "https://lapal.ch/formulations/pgt-121-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f023",
+   "band": "formulations",
+   "name_full": "PGDM1400 (mAb)",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "4M",
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 4 months",
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I/II",
+   "developers_full": [
+    "NIAID"
+   ],
+   "drug_class": "bNAb targeting the apex of the HIV-1 envelope trimer",
+   "lapal_url": "https://lapal.ch/formulations/pgdm1400-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f024",
+   "band": "formulations",
+   "name_full": "Lopinavir, Ritonavir, and Tenofovir (LRT) TLC-ART 101",
+   "routes": [
+    "SC"
+   ],
+   "routes_full": [
+    "Subcutaneous"
+   ],
+   "frequencies": [
+    "2W",
+    "1M"
+   ],
+   "frequencies_full": [
+    "Every 2 weeks",
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "developers_full": [
+    "University of Washington"
+   ],
+   "drug_class": "protease inhibitors (PI) + nucleotide analog reverse-transcriptase inhibitor (NRTI)",
+   "lapal_url": "https://lapal.ch/formulations/lopinavir-ritonavir-and-tenofovir-lrt-tlc-art-101",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f025",
+   "band": "formulations",
+   "name_full": "Ultra-Long-Acting Dimeric Bictegravir Prodrug",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "University of Nebraska Medical Center"
+   ],
+   "drug_class": "prodrug of bictegravir (integrase strand transfer inhibitor; INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/ultra-long-acting-dimeric-bictegravir-prodrug",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f026",
+   "band": "formulations",
+   "name_full": "lenacapavir + teropavimab + zinlirvimab",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "capsid inhibitor + 2 bNAbs targeting gp120 on HIV-1 envelope",
+   "lapal_url": "https://lapal.ch/formulations/lenacapavir-teropavimab-zinlirvimab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f027",
+   "band": "formulations",
+   "name_full": "PGT121.414.LS + VRC07-523LS (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "4M",
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 4 months",
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "NIAID"
+   ],
+   "drug_class": "bNAbs targeting gp120 on HIV-1 virus envelope",
+   "lapal_url": "https://lapal.ch/formulations/pgt121414ls-vrc07-523ls-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f028",
+   "band": "formulations",
+   "name_full": "lepetegravir + lenacapavir pacfosacil (GS-1720+GS-4182)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "INSTI+capsid inhibitor",
+   "lapal_url": "https://lapal.ch/formulations/lepetegravir-lenacapavir-pacfosacil-gs-1720gs-4182",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f029",
+   "band": "formulations",
+   "name_full": "Bictegravir-PLGA nanoformulation",
+   "routes": [
+    "SC"
+   ],
+   "routes_full": [
+    "Subcutaneous"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "developers_full": [
+    "Creighton University"
+   ],
+   "drug_class": "Second-generation Integrase Strand Transfer Inhibitors (INSTI)",
+   "lapal_url": "https://lapal.ch/formulations/bictegravir-plga-nanoformulation",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c030",
+   "band": "compounds",
+   "name_full": "Ulonivirine (MK-8507)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "Merck / MSD"
+   ],
+   "drug_class": "NNRTI",
+   "lapal_url": "https://lapal.ch/compounds/ulonivirine-mk-8507",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c032",
+   "band": "compounds",
+   "name_full": "lepetegravir (GS-1720)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/compounds/lepetegravir-gs-1720",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c033",
+   "band": "compounds",
+   "name_full": "Cabotegravir",
+   "routes": [
+    "PO",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M",
+    "2M",
+    "4M"
+   ],
+   "frequencies_full": [
+    "Monthly",
+    "Every 2 months",
+    "Every 4 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Approved",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "integrase strand transfer inhibitor; INSTI)",
+   "lapal_url": "https://lapal.ch/compounds/cabotegravir",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c034",
+   "band": "compounds",
+   "name_full": "Islatravir",
+   "routes": [
+    "PO",
+    "SC"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Merck / MSD"
+   ],
+   "drug_class": "NRTTI",
+   "lapal_url": "https://lapal.ch/compounds/islatravir-isl",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c035",
+   "band": "formulations",
+   "name_full": "Dapivirine ring monthly",
+   "routes": [
+    "VR"
+   ],
+   "routes_full": [
+    "Topical (Vaginal)"
+   ],
+   "frequencies": [
+    "1M"
+   ],
+   "frequencies_full": [
+    "Monthly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Approved",
+   "highest_phase": null,
+   "developers_full": [
+    "Population Council"
+   ],
+   "drug_class": "NNRTI",
+   "lapal_url": "https://lapal.ch/technology/dapivirine-monthly-vaginal-ring",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Prevention",
+   "is_treatment": false,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": true
+   }
+  },
+  {
+   "id": "c037",
+   "band": "compounds",
+   "name_full": "VH-310 (VH-4367310)",
+   "routes": [
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "6M",
+    "12M"
+   ],
+   "frequencies_full": [
+    "Every 6 months",
+    "Yearly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "developers_full": [
+    "Exavir Therapeutics",
+    "ViiV Healthcare"
+   ],
+   "drug_class": "Prodrug of cabotegravir (integrase strand transfer inhibitor (INSTI))",
+   "lapal_url": "https://lapal.ch/compounds/vh-310-vh-4367310",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c038",
+   "band": "compounds",
+   "name_full": "Lenacapavir pacfosacil (GS-4182)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "Prodrug of lenacapavir (capsid inhibitor)",
+   "lapal_url": "https://lapal.ch/compounds/lenacapavir-pacfosacil-gs-4182",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c039",
+   "band": "compounds",
+   "name_full": "Lenacapavir",
+   "routes": [
+    "PO",
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "6M",
+    "12M"
+   ],
+   "frequencies_full": [
+    "Every 6 months",
+    "Yearly"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Approved",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/lenacapavir-len",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c040",
+   "band": "compounds",
+   "name_full": "GS-3242",
+   "routes": [
+    "PO",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "3M",
+    "4M"
+   ],
+   "frequencies_full": [
+    "Every 3 months",
+    "Every 4 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "Integrase Strand Transfer Inhibitors (INSTIs)",
+   "lapal_url": "https://lapal.ch/compounds/gs-3242",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c041",
+   "band": "compounds",
+   "name_full": "VH-499 (VH-4011499)",
+   "routes": [
+    "PO",
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "4M",
+    "6M",
+    "12M"
+   ],
+   "frequencies_full": [
+    "Every 4 months",
+    "Every 6 months",
+    "Yearly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "ViiV Healthcare",
+    "Shionogi"
+   ],
+   "drug_class": "HIV-1 Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/vh-499-vh-4011499",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c042",
+   "band": "compounds",
+   "name_full": "VH-184 (VH-4524184)",
+   "routes": [
+    "PO",
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Oral",
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M",
+    "2M",
+    "4M"
+   ],
+   "frequencies_full": [
+    "Monthly",
+    "Every 2 months",
+    "Every 4 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "ViiV Healthcare",
+    "Shionogi"
+   ],
+   "drug_class": "Integrase strand transfer inhibitor (INSTI)",
+   "lapal_url": "https://lapal.ch/compounds/vh-184-vh-4524184",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c043",
+   "band": "compounds",
+   "name_full": "Depulfavirine nanosphere LAI",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "1M"
+   ],
+   "frequencies_full": [
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II",
+   "developers_full": [
+    "Viriom"
+   ],
+   "drug_class": "Diphenylether Non-nucleoside reverse transcriptase Allosteric inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/depulfavirine-nanosphere-lai",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c044",
+   "band": "compounds",
+   "name_full": "Alimatravir (MK-8527)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1M"
+   ],
+   "frequencies_full": [
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "developers_full": [
+    "Merck / MSD"
+   ],
+   "drug_class": "nucleoside reverse transcriptase translocation inhibitor (NRTTI)",
+   "lapal_url": "https://lapal.ch/compounds/alimatravir-mk-8527",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Prevention",
+   "is_treatment": false,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c045",
+   "band": "compounds",
+   "name_full": "GS-3107",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1M"
+   ],
+   "frequencies_full": [
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I/II",
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/gs-3107",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  }
+ ]
+}
