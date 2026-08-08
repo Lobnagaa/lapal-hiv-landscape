@@ -63,6 +63,25 @@
    "Phase III": "#9A8CC3",
    "Phase IV": "#8878B8"
   },
+  "class_colours": {
+   "Capsid inhibitor": "#922940",
+   "INSTI": "#436CC8",
+   "NNRTI": "#9A6700",
+   "NRTI": "#009ED2",
+   "NRTTI": "#008B88",
+   "mAb": "#30A86A",
+   "Combination": "#793480"
+  },
+  "class_singles": [
+   "Capsid inhibitor",
+   "INSTI",
+   "NNRTI",
+   "NRTI",
+   "NRTTI",
+   "mAb",
+   "PI",
+   "Fusion inhibitor"
+  ],
   "stage_tiers": {
    "Approved": {
     "colour": "#44B384",
@@ -149,6 +168,38 @@
    "excluded_count": 0,
    "excluded": []
   },
+  "class_order": [
+   "INSTI",
+   "mAb",
+   "Capsid inhibitor",
+   "NNRTI",
+   "NRTTI",
+   "NRTI",
+   "Capsid inhibitor + INSTI",
+   "Capsid inhibitor + NRTTI",
+   "Capsid inhibitor + mAb",
+   "INSTI + NNRTI",
+   "INSTI + NRTI",
+   "NRTI + PI",
+   "NRTTI + NNRTI"
+  ],
+  "class_vocabulary": [
+   "Capsid inhibitor",
+   "INSTI",
+   "NNRTI",
+   "NRTI",
+   "NRTTI",
+   "mAb",
+   "PI",
+   "Fusion inhibitor",
+   "Capsid inhibitor + INSTI",
+   "Capsid inhibitor + NRTTI",
+   "Capsid inhibitor + mAb",
+   "INSTI + NNRTI",
+   "INSTI + NRTI",
+   "NRTI + PI",
+   "NRTTI + NNRTI"
+  ],
   "known_data_issues": [
    "6 entries have no recorded dosing interval.",
    "Approved but missing regulatory rows: Dapivirine ring monthly."
@@ -180,6 +231,7 @@
     "Gilead"
    ],
    "drug_class": null,
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/formulations/lenacapavir-6-monthly",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -222,6 +274,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/cab-la-cabotegravir-2-monthly",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -262,6 +315,7 @@
     "Johnson & Johnson"
    ],
    "drug_class": "NNRTI",
+   "class_group": "NNRTI",
    "lapal_url": "https://lapal.ch/formulations/rilpivirine-2-monthly",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -305,6 +359,7 @@
     "Johnson & Johnson"
    ],
    "drug_class": "INSTI+NNRTI",
+   "class_group": "INSTI + NNRTI",
    "lapal_url": "https://lapal.ch/formulations/cabotegravir-rilpivirine",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -345,6 +400,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/lotivibart-n6ls-vh3810109-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -385,6 +441,7 @@
     "Gilead"
    ],
    "drug_class": "2 bNAbs targeting gp120 on HIV-1 envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/teropavimab-zinlirvimab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -425,6 +482,7 @@
     "University of Washington"
    ],
    "drug_class": "2 NRTIs (TDF/3TC) +1 INSTI (DTG)",
+   "class_group": "INSTI + NRTI",
    "lapal_url": "https://lapal.ch/formulations/tenofovir-lamivudine-dolutegravir-tld-long-acting-injectable-lai-tld-lai",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -468,6 +526,7 @@
     "TaiMed Biologics"
    ],
    "drug_class": "mAb targeting gp120-CD4 complex",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/ibalizumab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -508,6 +567,7 @@
     "AbbVie"
    ],
    "drug_class": "mAb anti-PD1",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/budigalimab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -550,6 +610,7 @@
     "NIAID"
    ],
    "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/vrc07-523ls-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -592,6 +653,7 @@
     "University of Liverpool"
    ],
    "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/bictegravir-la",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -637,6 +699,7 @@
     "Gilead"
    ],
    "drug_class": "INSTI+capsid inhibitor",
+   "class_group": "Capsid inhibitor + INSTI",
    "lapal_url": "https://lapal.ch/formulations/cabotegravir-lenacapavir",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -676,6 +739,7 @@
     "Gilead"
    ],
    "drug_class": "NRTTI + capsid inhibitor",
+   "class_group": "Capsid inhibitor + NRTTI",
    "lapal_url": "https://lapal.ch/formulations/mk-8591d-islatravir-and-lenacapavir",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -714,6 +778,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/cabotegravir-4-monthly-q4m",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -753,6 +818,7 @@
     "Exavir Therapeutics"
    ],
    "drug_class": "prodrug of rilpivirine (non-nucleoside reverse transcriptase inhibitor (NNRTI))",
+   "class_group": "NNRTI",
    "lapal_url": "https://lapal.ch/formulations/rilpivirine-prodrug-nanoformulation-nm3rpv",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -787,6 +853,7 @@
     "Exavir Therapeutics"
    ],
    "drug_class": "prodrug of tenofovir (nucleotide analog reverse-transcriptase inhibitor (NRTI))",
+   "class_group": "NRTI",
    "lapal_url": "https://lapal.ch/formulations/bictegravir-la",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -825,6 +892,7 @@
     "Gilead"
    ],
    "drug_class": "Capsid inhibitor",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/formulations/lenacapavir-once-yearly",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -861,6 +929,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/cabotegravir-ph20",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -907,6 +976,7 @@
     "NIAID"
    ],
    "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/vrc01-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -945,6 +1015,7 @@
     "Merck / MSD"
    ],
    "drug_class": "NRTTI+NNRTI",
+   "class_group": "NRTTI + NNRTI",
    "lapal_url": "https://lapal.ch/formulations/mk-8591b-islatravir-ulonivirine",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -983,6 +1054,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "Capsid inhibitor",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/formulations/vh-280-vh-4004280",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1020,6 +1092,7 @@
     "IAVI"
    ],
    "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/pgt-121-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1060,6 +1133,7 @@
     "NIAID"
    ],
    "drug_class": "bNAb targeting the apex of the HIV-1 envelope trimer",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/pgdm1400-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1100,6 +1174,7 @@
     "University of Washington"
    ],
    "drug_class": "protease inhibitors (PI) + nucleotide analog reverse-transcriptase inhibitor (NRTI)",
+   "class_group": "NRTI + PI",
    "lapal_url": "https://lapal.ch/formulations/lopinavir-ritonavir-and-tenofovir-lrt-tlc-art-101",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1138,6 +1213,7 @@
     "University of Nebraska Medical Center"
    ],
    "drug_class": "prodrug of bictegravir (integrase strand transfer inhibitor; INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/ultra-long-acting-dimeric-bictegravir-prodrug",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1178,6 +1254,7 @@
     "Gilead"
    ],
    "drug_class": "capsid inhibitor + 2 bNAbs targeting gp120 on HIV-1 envelope",
+   "class_group": "Capsid inhibitor + mAb",
    "lapal_url": "https://lapal.ch/formulations/lenacapavir-teropavimab-zinlirvimab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1220,6 +1297,7 @@
     "NIAID"
    ],
    "drug_class": "bNAbs targeting gp120 on HIV-1 virus envelope",
+   "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/pgt121414ls-vrc07-523ls-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1258,6 +1336,7 @@
     "Gilead"
    ],
    "drug_class": "INSTI+capsid inhibitor",
+   "class_group": "Capsid inhibitor + INSTI",
    "lapal_url": "https://lapal.ch/formulations/lepetegravir-lenacapavir-pacfosacil-gs-1720gs-4182",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1292,6 +1371,7 @@
     "Creighton University"
    ],
    "drug_class": "Second-generation Integrase Strand Transfer Inhibitors (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/formulations/bictegravir-plga-nanoformulation",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1330,6 +1410,7 @@
     "Merck / MSD"
    ],
    "drug_class": "NNRTI",
+   "class_group": "NNRTI",
    "lapal_url": "https://lapal.ch/compounds/ulonivirine-mk-8507",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1368,6 +1449,7 @@
     "Gilead"
    ],
    "drug_class": "integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/compounds/lepetegravir-gs-1720",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1412,6 +1494,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "integrase strand transfer inhibitor; INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/compounds/cabotegravir",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1452,6 +1535,7 @@
     "Merck / MSD"
    ],
    "drug_class": "NRTTI",
+   "class_group": "NRTTI",
    "lapal_url": "https://lapal.ch/compounds/islatravir-isl",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1490,6 +1574,7 @@
     "Population Council"
    ],
    "drug_class": "NNRTI",
+   "class_group": "NNRTI",
    "lapal_url": "https://lapal.ch/technology/dapivirine-monthly-vaginal-ring",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1533,6 +1618,7 @@
     "ViiV Healthcare"
    ],
    "drug_class": "Prodrug of cabotegravir (integrase strand transfer inhibitor (INSTI))",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/compounds/vh-310-vh-4367310",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1571,6 +1657,7 @@
     "Gilead"
    ],
    "drug_class": "Prodrug of lenacapavir (capsid inhibitor)",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/compounds/lenacapavir-pacfosacil-gs-4182",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1615,6 +1702,7 @@
     "Gilead"
    ],
    "drug_class": "Capsid inhibitor",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/compounds/lenacapavir-len",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1657,6 +1745,7 @@
     "Gilead"
    ],
    "drug_class": "Integrase Strand Transfer Inhibitors (INSTIs)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/compounds/gs-3242",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1704,6 +1793,7 @@
     "Shionogi"
    ],
    "drug_class": "HIV-1 Capsid inhibitor",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/compounds/vh-499-vh-4011499",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1751,6 +1841,7 @@
     "Shionogi"
    ],
    "drug_class": "Integrase strand transfer inhibitor (INSTI)",
+   "class_group": "INSTI",
    "lapal_url": "https://lapal.ch/compounds/vh-184-vh-4524184",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1789,6 +1880,7 @@
     "Viriom"
    ],
    "drug_class": "Diphenylether Non-nucleoside reverse transcriptase Allosteric inhibitor",
+   "class_group": "NNRTI",
    "lapal_url": "https://lapal.ch/compounds/depulfavirine-nanosphere-lai",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1827,6 +1919,7 @@
     "Merck / MSD"
    ],
    "drug_class": "nucleoside reverse transcriptase translocation inhibitor (NRTTI)",
+   "class_group": "NRTTI",
    "lapal_url": "https://lapal.ch/compounds/alimatravir-mk-8527",
    "display_order": null,
    "therapeutic_areas": "HIV",
@@ -1865,6 +1958,7 @@
     "Gilead"
    ],
    "drug_class": "Capsid inhibitor",
+   "class_group": "Capsid inhibitor",
    "lapal_url": "https://lapal.ch/compounds/gs-3107",
    "display_order": null,
    "therapeutic_areas": "HIV",

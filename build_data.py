@@ -27,6 +27,14 @@ INDIC  = ['Treatment','Prevention','Both']
 # with no interval recorded at all; it pairs with the missing_frequency flag.
 FREQSRC = ['LAPaL record','derived from trials','manually confirmed','not stated']
 
+# Controlled vocabulary for class_group, which drives the class-by-phase grid.
+# drug_class stays as free text for the tooltip; this is the tidy version.
+# Combinations are their own value, so every entry is counted exactly once.
+CLASS_SINGLES = ['Capsid inhibitor','INSTI','NNRTI','NRTI','NRTTI','mAb','PI','Fusion inhibitor']
+CLASS_COMBOS  = ['Capsid inhibitor + INSTI','Capsid inhibitor + NRTTI','Capsid inhibitor + mAb',
+                 'INSTI + NNRTI','INSTI + NRTI','NRTI + PI','NRTTI + NNRTI']
+CLASSES = CLASS_SINGLES + CLASS_COMBOS
+
 # Clinical phases in order, least to most advanced. Drives the phase chip ramp.
 PHASES = ['Preclinical','Phase I','Phase I/II','Phase II','Phase II/III','Phase III','Phase IV']
 
@@ -76,6 +84,18 @@ META = {
  'phase_colours':{'Preclinical':'#F1F0F7','Phase I':'#E4E1F1','Phase I/II':'#D5D0E9',
                   'Phase II':'#C3BBDE','Phase II/III':'#AFA4D1','Phase III':'#9A8CC3',
                   'Phase IV':'#8878B8'},
+ # Categorical palette for the stacked count charts, where class is a series
+ # rather than an ordered value. Optimised for worst-case colour-vision-deficient
+ # separation: min OKLab dE 11.0 across all pairs, against a target of 8.
+ # Assigned in fixed vocabulary order, never by rank, so a filter that changes
+ # the class counts never repaints the survivors.
+ #
+ # The charts fold every combination class into one "Combination" series, which
+ # keeps the stack to seven and inside the readable limit for a stacked bar.
+ 'class_colours':{'Capsid inhibitor':'#922940','INSTI':'#436CC8','NNRTI':'#9A6700',
+                  'NRTI':'#009ED2','NRTTI':'#008B88','mAb':'#30A86A',
+                  'Combination':'#793480'},
+ 'class_singles':CLASS_SINGLES,
  'stage_tiers':{
     'Approved':{'colour':'#44B384','definition':'marketed in at least one jurisdiction'},
     'Late-stage':{'colour':'#EE7718','definition':'highest recorded phase II/III to III'},
@@ -183,6 +203,10 @@ def main():
             except ValueError:
                 errors.append(f'{where}: "order" must be a number, got "{order_raw}"')
 
+        cls=g('class_group')
+        if cls and cls not in CLASSES:
+            errors.append(f'{where}: class_group must be one of {CLASSES}, got "{cls}"')
+
         link=g('link in LAPaL')
         if link and not re.match(r'^https?://', link, re.I):
             errors.append(f'{where}: "link in LAPaL" must start with http:// or https://, got "{link}"')
@@ -206,6 +230,7 @@ def main():
             'stage':stage,'highest_phase':g('highest_phase') or None,
             'developers_full':[d.strip() for d in re.split(r'[;]', g('developers')) if d.strip()],
             'drug_class':g('drug_class') or None,
+            'class_group':cls or None,
             'lapal_url':link or None,
             'display_order':order,
             'therapeutic_areas':'HIV',
@@ -229,6 +254,17 @@ def main():
     # but they are recorded here so the dashboard can report what was withheld.
     # Curation stays visible rather than silent.
     META['curation'] = {'excluded_count': len(excluded), 'excluded': excluded}
+
+    # Row order for the class-by-phase grid: single classes first, most populous
+    # at the top, then the combinations. Computed here rather than in the
+    # dashboard so the order is stable and the build owns it.
+    import collections as _c
+    counts = _c.Counter(e['class_group'] for e in entries if e['class_group'])
+    META['class_order'] = (
+        sorted((c for c in counts if c in CLASS_SINGLES), key=lambda c: (-counts[c], c))
+        + sorted((c for c in counts if c not in CLASS_SINGLES), key=lambda c: (-counts[c], c))
+    )
+    META['class_vocabulary'] = CLASSES
 
     known=[]
     mf=[e['name_full'] for e in entries if e['flags']['missing_frequency']]

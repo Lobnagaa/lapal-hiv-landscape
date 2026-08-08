@@ -16,15 +16,28 @@ import type { Entry, Meta } from '../types'
 import { BAR_H, BAR_OPACITY, DOT_R, rowMarks } from '../encoding'
 import { stageVar } from '../theme'
 
-export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
+export function Legend({
+  entries,
+  meta,
+  /**
+   * The dot, range-bar and not-stated-lane keys describe the timeline's marks
+   * and mean nothing in the class grid, so they are suppressed there. Stage,
+   * route and phase apply to both views.
+   */
+  showIntervalKeys = true,
+}: {
+  entries: Entry[]
+  meta: Meta
+  showIntervalKeys?: boolean
+}) {
   const [open, setOpen] = useState(false)
 
   // What marks does the current view actually contain?
   const marks = entries.map((e) => rowMarks(e, meta))
   const present = {
-    dot: marks.some((m) => m.dotIndices.length > 0),
-    range: marks.some((m) => m.span !== null),
-    notStated: marks.some((m) => m.notStated),
+    dot: showIntervalKeys && marks.some((m) => m.dotIndices.length > 0),
+    range: showIntervalKeys && marks.some((m) => m.span !== null),
+    notStated: showIntervalKeys && marks.some((m) => m.notStated),
   }
   const stagesPresent = Object.keys(meta.stage_tiers).filter((s) =>
     entries.some((e) => e.stage === s),
@@ -160,7 +173,7 @@ export function Legend({ entries, meta }: { entries: Entry[]; meta: Meta }) {
           </p>
         )}
 
-        {meta.dosing_axis_note && (
+        {showIntervalKeys && meta.dosing_axis_note && (
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] leading-relaxed text-ink-soft">
             <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
               Dosing interval

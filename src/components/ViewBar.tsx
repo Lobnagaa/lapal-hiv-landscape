@@ -27,6 +27,7 @@ export function ViewBar({
   onResetOrder,
   onShowAll,
   onUnhide,
+  mode = 'timeline',
 }: {
   view: ViewState
   /** The arranged, visible entries: exactly what an export contains. */
@@ -39,6 +40,8 @@ export function ViewBar({
   onResetOrder: () => void
   onShowAll: () => void
   onUnhide: (id: string) => void
+  /** Which view is on screen; changes the hint and whether export is offered. */
+  mode?: 'timeline' | 'agents' | 'grid' | 'charts'
 }) {
   const [listOpen, setListOpen] = useState(false)
   const custom = isCustomOrder(view)
@@ -52,6 +55,11 @@ export function ViewBar({
           <>
             <span className="font-semibold text-ink">Custom order.</span> Grouping by stage is off;
             the coloured dot beside each name shows its stage.
+          </>
+        ) : mode === 'grid' ? (
+          <>
+            Use the eye icon on a chip to hide it. Clicking a chip opens its LAPaL entry. Chips
+            sit where their class and phase put them, so there is nothing to reorder here.
           </>
         ) : (
           <>
@@ -98,6 +106,7 @@ export function ViewBar({
 
       <span className="flex-1" />
 
+      {mode === 'timeline' && (
       <ExportMenu
         options={{
           entries,
@@ -108,6 +117,7 @@ export function ViewBar({
           hiddenCount: hidden,
         }}
       />
+      )}
 
       {listOpen && hiddenEntries.length > 0 && (
         <ul className="w-full space-y-1 border-l-2 border-hairline pt-1 pl-4">

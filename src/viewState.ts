@@ -106,6 +106,18 @@ export function nudge(displayed: Entry[], v: ViewState, id: string, delta: -1 | 
   return { ...v, order: next }
 }
 
+/**
+ * Replace the order outright with a list of ids.
+ *
+ * A view that renders its own arrangement (the agents table sorts itself) must
+ * compute the move against the rows IT drew and hand the result over. Passing
+ * an index computed against some other list is how the reorder silently moved
+ * the wrong row twice in this project.
+ */
+export function setOrder(v: ViewState, ids: string[]): ViewState {
+  return { ...v, order: ids }
+}
+
 export function toggleHidden(v: ViewState, id: string): ViewState {
   const hidden = new Set(v.hidden)
   if (hidden.has(id)) hidden.delete(id)

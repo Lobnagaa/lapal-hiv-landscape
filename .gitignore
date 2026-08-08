@@ -5,9 +5,10 @@ dist/
 .vite/
 *.tsbuildinfo
 
-# Timestamped safety copies made before a scripted edit. Local only: git is the
-# version history once the workbook is committed.
+# Manual and scripted backup copies of the workbook. Local only: git is the
+# version history once hiv_curation.xlsx itself is committed.
 hiv_curation.backup-*.xlsx
+hiv_curation-original*.xlsx
 
 # The single-file review copy is a build artefact, regenerated on demand.
 HIV-dashboard-review.html

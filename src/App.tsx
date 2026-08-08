@@ -21,6 +21,10 @@ import { Summary } from './components/Summary'
 import { Legend } from './components/Legend'
 import { ViewBar } from './components/ViewBar'
 import { Timeline } from './components/Timeline'
+import { ClassGrid } from './components/ClassGrid'
+import { AgentPhase } from './components/AgentPhase'
+import { PhaseCharts } from './components/PhaseCharts'
+import { Tooltip, type TooltipTarget } from './components/Tooltip'
 import { accentFor, applyAccent } from './theme'
 import { groupEntries, sortByAdminOrder } from './encoding'
 import { type FilterState, applyFilters, defaultFilters, summarise } from './filters'
@@ -33,6 +37,7 @@ import {
   nudge,
   resetOrder,
   showAll,
+  setOrder,
   toggleHidden,
 } from './viewState'
 
@@ -40,6 +45,10 @@ export default function App() {
   const state = useDataset()
   const [filters, setFilters] = useState<FilterState | null>(null)
   const [view, setView] = useState<ViewState>(defaultView)
+  /** Which visualisation is on screen. */
+  const [mode, setMode] = useState<'timeline' | 'agents' | 'grid' | 'charts'>('timeline')
+  /** The grid's hover card. The timeline manages its own. */
+  const [gridTip, setGridTip] = useState<TooltipTarget | null>(null)
 
   const meta = state.status === 'ready' ? state.data.meta : null
 
@@ -106,21 +115,82 @@ export default function App() {
         setFilters={(update) => setFilters((f) => (f ? update(f) : f))}
       />
 
-      <Legend entries={visible} meta={meta} />
+      <Legend entries={visible} meta={meta} showIntervalKeys={mode === 'timeline'} />
 
-      <ViewBar
-        view={view}
-        entries={visible}
-        allEntries={filtered}
-        meta={meta}
-        indicationLabel={indicationLabel}
-        accent={accentFor(meta, filters.indications)}
-        onResetOrder={() => setView(resetOrder)}
-        onShowAll={() => setView(showAll)}
-        onUnhide={(id) => setView((v) => toggleHidden(v, id))}
-      />
+      <div className="flex flex-wrap items-center gap-2 pt-4">
+        {(
+          [
+            ['timeline', 'Dosing timeline', 'Every entry on an ordinal dosing-interval axis'],
+            ['agents', 'Agents by phase', 'One row per product, showing its most advanced trial phase'],
+            ['grid', 'Class and phase', 'Agents by drug class and most advanced trial phase'],
+            ['charts', 'Counts', 'Aggregate counts by class and by phase'],
+          ] as const
+        ).map(([key, label, hint]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={mode === key}
+            title={hint}
+            onClick={() => setMode(key)}
+            className="rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition-colors"
+            style={{
+              borderColor: mode === key ? 'var(--color-accent)' : 'var(--color-hairline)',
+              background:
+                mode === key ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)' : 'transparent',
+              color: mode === key ? 'var(--color-accent)' : 'var(--color-ink-soft)',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {mode !== 'charts' && (
+        <ViewBar
+          view={view}
+          entries={visible}
+          allEntries={filtered}
+          meta={meta}
+          indicationLabel={indicationLabel}
+          accent={accentFor(meta, filters.indications)}
+          onResetOrder={() => setView(resetOrder)}
+          onShowAll={() => setView(showAll)}
+          onUnhide={(id) => setView((v) => toggleHidden(v, id))}
+          mode={mode}
+        />
+      )}
 
       <div className="mt-2">
+        {mode !== 'timeline' ? (
+          <>
+            {mode === 'grid' && (
+              <ClassGrid
+                entries={visible}
+                meta={meta}
+                onHover={(entry, x, y) => setGridTip({ entry, x, y, pinned: false })}
+                onLeave={() => setGridTip(null)}
+                onHide={(id) => setView((v) => toggleHidden(v, id))}
+              />
+            )}
+            {mode === 'agents' && (
+              <AgentPhase
+                entries={visible}
+                meta={meta}
+                onHover={(entry, x, y) => setGridTip({ entry, x, y, pinned: false })}
+                onLeave={() => setGridTip(null)}
+                controls={{
+                  custom: isCustomOrder(view),
+                  onReorder: (ids) => setView((v) => setOrder(v, ids)),
+                  onHide: (id) => setView((v) => toggleHidden(v, id)),
+                }}
+              />
+            )}
+            {mode === 'charts' && <PhaseCharts entries={visible} meta={meta} />}
+            {gridTip && mode !== 'charts' && (
+              <Tooltip target={gridTip} meta={meta} onDismiss={() => setGridTip(null)} />
+            )}
+          </>
+        ) : (
         <Timeline
           entries={visible}
           meta={meta}
@@ -134,6 +204,7 @@ export default function App() {
             onHide: (id) => setView((v) => toggleHidden(v, id)),
           }}
         />
+        )}
       </div>
 
       <Footer meta={meta} />

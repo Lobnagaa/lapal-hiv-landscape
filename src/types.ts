@@ -90,8 +90,18 @@ export interface Entry {
 
   /** One or more developers. Feeds the developer filter and the row-end label. */
   developers_full: string[]
-  /** Drug class. Tooltip only. */
+  /** Drug class as free text, exactly as curated. Tooltip only. */
   drug_class: string | null
+
+  /**
+   * Tidy class from the controlled vocabulary, driving the class-by-phase grid.
+   *
+   * Distinct from drug_class, which is free text and was written thirty
+   * different ways across forty-three entries. Combinations are their own
+   * value ("Capsid inhibitor + INSTI"), so every entry is counted exactly
+   * once and the grid totals match the entry count.
+   */
+  class_group: string | null
 
   /**
    * Link to this entry on lapal.ch. Clicking the row opens it in a new tab.
@@ -217,6 +227,18 @@ export interface Meta {
   route_colours?: Record<string, string>
   /** Clinical phases in order, least to most advanced. */
   phase_order?: string[]
+  /** Row order for the class grid: single classes by frequency, then combinations. */
+  class_order?: string[]
+  /** The full controlled vocabulary, whether or not each value is in use. */
+  class_vocabulary?: string[]
+  /** Single (non-combination) classes, used to fold combinations in the charts. */
+  class_singles?: string[]
+  /**
+   * Categorical colour per class for the count charts. Combination products
+   * share a single "Combination" series. Keyed by a fixed vocabulary, never by
+   * rank, so filtering never repaints the series that survive.
+   */
+  class_colours?: Record<string, string>
   /**
    * Phase -> chip tint. A single-hue ramp, light to dark, so a darker chip
    * reads as further along. Chip text is always ink, so a missing entry
