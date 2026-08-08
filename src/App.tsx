@@ -115,7 +115,12 @@ export default function App() {
         setFilters={(update) => setFilters((f) => (f ? update(f) : f))}
       />
 
-      <Legend entries={visible} meta={meta} showIntervalKeys={mode === 'timeline'} />
+      <Legend
+        entries={visible}
+        meta={meta}
+        showIntervalKeys={mode === 'timeline'}
+        showBandKey={mode !== 'charts'}
+      />
 
       <div className="flex flex-wrap items-center gap-2 pt-4">
         {(
@@ -145,7 +150,7 @@ export default function App() {
         ))}
       </div>
 
-      {mode !== 'charts' && (
+      {(
         <ViewBar
           view={view}
           entries={visible}

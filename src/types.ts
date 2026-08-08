@@ -225,8 +225,15 @@ export interface Meta {
    * always printed, so a missing entry degrades rather than loses information.
    */
   route_colours?: Record<string, string>
+  /** Wash colour for the compound / formulation tag, keyed by band. */
+  band_colours?: Record<string, string>
   /** Clinical phases in order, least to most advanced. */
   phase_order?: string[]
+  /**
+   * Display overrides for phase values, e.g. Phase IV shown as "Marketed".
+   * The stored value is unchanged; this only affects what a reader sees.
+   */
+  phase_labels?: Record<string, string>
   /** Row order for the class grid: single classes by frequency, then combinations. */
   class_order?: string[]
   /** The full controlled vocabulary, whether or not each value is in use. */
@@ -291,4 +298,32 @@ export type IndicationBadge = 'Treatment' | 'Prevention' | 'Both'
 export function indicationBadge(e: Entry): IndicationBadge {
   if (e.is_treatment && e.is_prevention) return 'Both'
   return e.is_treatment ? 'Treatment' : 'Prevention'
+}
+
+/**
+ * How a phase should be shown.
+ *
+ * meta.phase_labels wins where it has an entry, so "Phase IV" can read as
+ * "Marketed" without re-curating the workbook. `short` abbreviates the
+ * remainder for tight spaces ("Phase III" -> "Ph III"), but never touches an
+ * explicit override, which is already the wording the reader should see.
+ */
+export function phaseLabel(meta: Meta, phase: string, short = false): string {
+  const override = meta.phase_labels?.[phase]
+  if (override) return override
+  return short ? phase.replace(/^Phase\s+/i, 'Ph ') : phase
+}
+
+/**
+ * Short tag for the record band.
+ *
+ * Used by the agents table and the class grid, where the marks already encode
+ * phase. Colouring those by development stage would be restating the same
+ * thing, since stage is derived from phase; what the reader cannot otherwise
+ * tell is whether a row is a finished formulation or the underlying molecule.
+ */
+export function bandTag(band: Band): { letter: string; label: string } {
+  return band === 'compounds'
+    ? { letter: 'C', label: 'Compound' }
+    : { letter: 'F/R', label: 'Formulation or regimen' }
 }

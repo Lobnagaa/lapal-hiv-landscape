@@ -16,12 +16,13 @@
  * projection and print. The geometry comes from encoding.ts, the same module
  * the on-screen timeline uses, so the two cannot drift apart.
  */
-import type { Entry, Meta } from '../types'
-import { indicationBadge } from '../types'
+import type { Band, Entry, Meta } from '../types'
+import { bandTag, indicationBadge, phaseLabel } from '../types'
 import { BAR_H, BAR_OPACITY, DOT_R, axisGeometry, rowMarks } from '../encoding'
 import { loadImage } from '../assets'
 import { buildPdf } from './pdf'
 import { buildZip } from './zip'
+import { axisScale, classLegend, columnsByClass, columnsByPhase, phaseLegend } from '../charts'
 
 /* --------------------------------------------------------------- editable */
 
@@ -107,9 +108,14 @@ function columns(W: number, pad: number): Cols {
   return { name, plot, route, dev, gap }
 }
 
+/** Which visualisation the export should draw. */
+export type ExportView = 'timeline' | 'agents' | 'grid' | 'charts'
+
 export interface ExportOptions {
   entries: Entry[]
   meta: Meta
+  /** Defaults to the timeline, so existing callers keep working. */
+  view?: ExportView
   indicationLabel: string
   accent: string
   arranged: boolean
@@ -186,8 +192,49 @@ interface SheetOpts extends ExportOptions {
   page?: { index: number; total: number }
 }
 
+/**
+ * The C / F/R tag, drawn to match the on-screen one in BandTag.tsx.
+ *
+ * Returns its width so callers can lay out whatever follows it. Canvas has no
+ * colour-mix, so the wash is done with globalAlpha, the same way route chips
+ * are drawn above.
+ */
+function drawBandTag(
+  ctx: CanvasRenderingContext2D,
+  meta: Meta,
+  band: Band,
+  x: number,
+  mid: number,
+  fontSize = 8,
+): number {
+  const p = meta.palette
+  const letter = bandTag(band).letter
+  ctx.font = `600 ${fontSize}px ${FONT}`
+  const w = ctx.measureText(letter).width + 8
+  const h = fontSize + 6
+  const tint = meta.band_colours?.[band]
+  ctx.beginPath()
+  ctx.roundRect(x, mid - h / 2, w, h, 2)
+  if (tint) {
+    ctx.globalAlpha = 0.15
+    ctx.fillStyle = tint
+    ctx.fill()
+    ctx.globalAlpha = 0.45
+    ctx.strokeStyle = tint
+    ctx.stroke()
+    ctx.globalAlpha = 1
+  } else {
+    ctx.strokeStyle = p.hairline
+    ctx.stroke()
+  }
+  ctx.fillStyle = tint ? p.ink : p.ink_soft
+  ctx.fillText(letter, x + 4, mid + fontSize / 2 - 1)
+  return w
+}
+
 function drawSheet(o: SheetOpts): HTMLCanvasElement {
   const { meta, rows, layout, assets, accent } = o
+  const view: ExportView = o.view ?? 'timeline'
   const p = meta.palette
   // Annotated as number: SHEET is `as const`, so these would otherwise infer as
   // literal unions and poison every arithmetic assignment downstream.
@@ -204,7 +251,10 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   const top = bodyTop(pad, hasLogo)
   const legendH = CHROME.legend
   const footerH = footerHeight(assets.ack.length > 0)
-  const bodyH = rows.length * ROW_H
+  // The grid and the charts are not row-stacks, so a tall "figure" export needs
+  // a sensible fixed body height rather than one derived from the row count.
+  const bodyH =
+    view === 'charts' ? 380 : view === 'grid' ? Math.max(260, rows.length * 18) : rows.length * ROW_H
   const H = layout === 'slide' ? SHEET.slide.H : top + bodyH + legendH + footerH + pad
 
   const canvas = document.createElement('canvas')
@@ -243,197 +293,218 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   ctx.fillText(bits.join('  ·  '), x0, y + 16)
   y += CHROME.subtitle
 
-  /* ---- axis ---- */
-  ctx.font = `600 10px ${FONT}`
-  ctx.fillStyle = p.ink_soft
-  ctx.letterSpacing = '1.4px'
-  ctx.fillText('PRODUCT', x0, y + 16)
-  ctx.fillText('DOSING INTERVAL', xPlot, y)
-  ctx.fillText('ROUTE', xRoute, y + 16)
-  ctx.fillText('DEVELOPER', xDev, y + 16)
-  ctx.letterSpacing = '0px'
-  ctx.font = `400 10px ${FONT}`
-  ctx.fillText('W = weeks, M = months · ordinal, not to scale', xPlot + 108, y)
-  // Captions clarifying that the route is either approved or merely studied,
-  // and that the phase is the most advanced trial on record.
-  ctx.font = `400 9px ${FONT}`
-  ctx.fillText('approved or investigated', xRoute, y + 27)
+  /* ---- body: one of four views ---- */
+  // The chrome above and below is shared. Only this middle section differs,
+  // so every view exports with the same header, legend, keys, partner logos,
+  // timestamp and disclaimer.
+  const bodyArea = {
+    x: x0,
+    y,
+    w: W - pad * 2,
+    h: (layout === 'slide' ? H - pad - footerH - legendH : y + rows.length * ROW_H) - y,
+  }
 
-  ctx.textAlign = 'center'
-  ctx.font = `400 11px ${MONO}`
-  ctx.fillStyle = p.ink
-  meta.dosing_axis_order.forEach((code, i) => ctx.fillText(code, xPlot + geo.centre(i), y + 16))
-  ctx.font = `400 10px ${FONT}`
-  ctx.fillStyle = p.ink_soft
-  ctx.fillText('no interval stated', xPlot + geo.notStatedCentre, y + 16)
-  ctx.textAlign = 'left'
-
-  y += CHROME.axis
-  ctx.strokeStyle = p.ink
-  ctx.lineWidth = 1
-  ctx.beginPath()
-  ctx.moveTo(x0, y + 0.5)
-  ctx.lineTo(W - pad, y + 0.5)
-  ctx.stroke()
-
-  /* ---- rows ---- */
-  rows.forEach((entry, i) => {
-    const top = y + i * ROW_H
-    const mid = top + ROW_H / 2
-    const marks = rowMarks(entry, meta)
-    const colour = meta.stage_tiers[entry.stage]?.colour ?? p.ink_soft
-
-    ctx.strokeStyle = p.hairline
-    ctx.globalAlpha = 0.7
-    meta.dosing_axis_order.forEach((_, k) => {
-      const cx = xPlot + geo.centre(k)
-      ctx.beginPath()
-      ctx.moveTo(cx + 0.5, top)
-      ctx.lineTo(cx + 0.5, top + ROW_H)
-      ctx.stroke()
-    })
-    ctx.globalAlpha = 1
-
-    ctx.save()
-    ctx.setLineDash([2, 3])
-    ctx.beginPath()
-    ctx.moveTo(xPlot + geo.dividerX + 0.5, top)
-    ctx.lineTo(xPlot + geo.dividerX + 0.5, top + ROW_H)
-    ctx.stroke()
-    ctx.restore()
-
-    // stage dot
-    ctx.fillStyle = colour
-    ctx.beginPath()
-    ctx.arc(x0 + 5, mid, 5, 0, Math.PI * 2)
-    ctx.fill()
-
-    // name + badge
-    const badge = indicationBadge(entry)
-    const badgeText = badge === 'Treatment' ? 'Tx' : badge === 'Prevention' ? 'Prev' : 'Both'
-    ctx.font = `700 9px ${FONT}`
-    const badgeW = ctx.measureText(badgeText).width + 12
-    ctx.font = `400 13px ${FONT}`
-    ctx.fillStyle = p.ink
-    const lines = wrap(ctx, entry.name_full, cols.name - 18 - badgeW - 10, 2)
-    const lineH = 15
-    let ny = mid - ((lines.length - 1) * lineH) / 2 + 4
-    for (const line of lines) {
-      ctx.fillText(line, x0 + 18, ny)
-      ny += lineH
-    }
-
-    const badgeX = x0 + 18 + Math.max(...lines.map((l) => ctx.measureText(l).width)) + 8
-    const badgeY = mid - ((lines.length - 1) * lineH) / 2 - 6
-    const badgeColour =
-      badge === 'Prevention' ? p.prevention_accent : badge === 'Treatment' ? p.treatment_accent : p.ink_soft
-    ctx.globalAlpha = 0.12
-    ctx.fillStyle = badgeColour
-    roundRect(ctx, badgeX, badgeY, badgeW, 14, 7)
-    ctx.globalAlpha = 1
-    ctx.fillStyle = badge === 'Both' ? p.ink : badgeColour
-    ctx.font = `700 9px ${FONT}`
-    ctx.textAlign = 'center'
-    ctx.letterSpacing = '0.7px'
-    ctx.fillText(badgeText, badgeX + badgeW / 2, badgeY + 10)
+  if (view === 'timeline') {
+    /* ---- axis ---- */
+    ctx.font = `600 10px ${FONT}`
+    ctx.fillStyle = p.ink_soft
+    ctx.letterSpacing = '1.4px'
+    ctx.fillText('PRODUCT', x0, y + 16)
+    ctx.fillText('DOSING INTERVAL', xPlot, y)
+    ctx.fillText('ROUTE', xRoute, y + 16)
+    ctx.fillText('DEVELOPER', xDev, y + 16)
     ctx.letterSpacing = '0px'
+    ctx.font = `400 10px ${FONT}`
+    ctx.fillText('W = weeks, M = months · ordinal, not to scale', xPlot + 108, y)
+    // Captions clarifying that the route is either approved or merely studied,
+    // and that the phase is the most advanced trial on record.
+    ctx.font = `400 9px ${FONT}`
+    ctx.fillText('approved or investigated', xRoute, y + 27)
+
+    ctx.textAlign = 'center'
+    ctx.font = `400 11px ${MONO}`
+    ctx.fillStyle = p.ink
+    meta.dosing_axis_order.forEach((code, i) => ctx.fillText(code, xPlot + geo.centre(i), y + 16))
+    ctx.font = `400 10px ${FONT}`
+    ctx.fillStyle = p.ink_soft
+    ctx.fillText('no interval stated', xPlot + geo.notStatedCentre, y + 16)
     ctx.textAlign = 'left'
 
-    // Phase chip, immediately after the indication badge. Single-hue ramp, so a
-    // darker chip reads as further along; the label stays in ink.
-    if (entry.highest_phase) {
-      const label = entry.highest_phase.replace(/^Phase\s+/i, 'Ph ')
-      ctx.font = `700 9px ${FONT}`
-      const pw = ctx.measureText(label).width + 12
-      const px = badgeX + badgeW + 5
-      const tint = meta.phase_colours?.[entry.highest_phase]
-      if (tint) {
-        ctx.fillStyle = tint
-        roundRect(ctx, px, badgeY, pw, 14, 7)
-      } else {
-        ctx.strokeStyle = p.hairline
+    y += CHROME.axis
+    ctx.strokeStyle = p.ink
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(x0, y + 0.5)
+    ctx.lineTo(W - pad, y + 0.5)
+    ctx.stroke()
+
+    /* ---- rows ---- */
+    rows.forEach((entry, i) => {
+      const top = y + i * ROW_H
+      const mid = top + ROW_H / 2
+      const marks = rowMarks(entry, meta)
+      const colour = meta.stage_tiers[entry.stage]?.colour ?? p.ink_soft
+
+      ctx.strokeStyle = p.hairline
+      ctx.globalAlpha = 0.7
+      meta.dosing_axis_order.forEach((_, k) => {
+        const cx = xPlot + geo.centre(k)
         ctx.beginPath()
-        ctx.roundRect(px, badgeY, pw, 14, 7)
+        ctx.moveTo(cx + 0.5, top)
+        ctx.lineTo(cx + 0.5, top + ROW_H)
         ctx.stroke()
-      }
-      ctx.fillStyle = tint ? p.ink : p.ink_soft
-      ctx.textAlign = 'center'
-      ctx.fillText(label, px + pw / 2, badgeY + 10)
-      ctx.textAlign = 'left'
-    }
-
-    if (marks.span) {
-      const bx = xPlot + geo.centre(marks.span.from)
-      const bw = geo.centre(marks.span.to) - geo.centre(marks.span.from)
-      ctx.globalAlpha = BAR_OPACITY
-      ctx.fillStyle = colour
-      roundRect(ctx, bx, mid - BAR_H / 2, bw, BAR_H, BAR_H / 2)
+      })
       ctx.globalAlpha = 1
-    }
 
-    ctx.fillStyle = colour
-    for (const k of marks.dotIndices) {
+      ctx.save()
+      ctx.setLineDash([2, 3])
       ctx.beginPath()
-      ctx.arc(xPlot + geo.centre(k), mid, DOT_R, 0, Math.PI * 2)
-      ctx.fill()
-    }
-
-    if (marks.notStated) {
-      ctx.beginPath()
-      ctx.arc(xPlot + geo.notStatedCentre, mid, DOT_R, 0, Math.PI * 2)
-      ctx.fillStyle = p.paper
-      ctx.fill()
-      ctx.strokeStyle = colour
-      ctx.lineWidth = 1.6
+      ctx.moveTo(xPlot + geo.dividerX + 0.5, top)
+      ctx.lineTo(xPlot + geo.dividerX + 0.5, top + ROW_H)
       ctx.stroke()
-      ctx.lineWidth = 1
-    }
+      ctx.restore()
 
-    // Route chips, tinted per route. The tint is fill and border only; the
-    // letters stay in ink so the code never depends on the colour.
-    let rx = xRoute
-    ctx.font = `400 10px ${MONO}`
-    for (const r of entry.routes) {
-      const w = ctx.measureText(r).width + 10
-      if (rx + w > xRoute + cols.route) break
-      const tint = meta.route_colours?.[r]
+      // stage dot
+      ctx.fillStyle = colour
       ctx.beginPath()
-      ctx.roundRect(rx, mid - 8, w, 15, 2)
-      if (tint) {
-        ctx.globalAlpha = 0.14
-        ctx.fillStyle = tint
-        ctx.fill()
-        ctx.globalAlpha = 0.45
-        ctx.strokeStyle = tint
-        ctx.stroke()
-        ctx.globalAlpha = 1
-      } else {
-        ctx.strokeStyle = p.hairline
-        ctx.stroke()
+      ctx.arc(x0 + 5, mid, 5, 0, Math.PI * 2)
+      ctx.fill()
+
+      // name + badge, with the record-band tag ahead of the name
+      const tagW = drawBandTag(ctx, meta, entry.band, x0 + 14, mid)
+      const nameX = x0 + 18 + tagW
+      const badge = indicationBadge(entry)
+      const badgeText = badge === 'Treatment' ? 'Tx' : badge === 'Prevention' ? 'Prev' : 'Both'
+      ctx.font = `700 9px ${FONT}`
+      const badgeW = ctx.measureText(badgeText).width + 12
+      ctx.font = `400 13px ${FONT}`
+      ctx.fillStyle = p.ink
+      const lines = wrap(ctx, entry.name_full, cols.name - (nameX - x0) - badgeW - 10, 2)
+      const lineH = 15
+      let ny = mid - ((lines.length - 1) * lineH) / 2 + 4
+      for (const line of lines) {
+        ctx.fillText(line, nameX, ny)
+        ny += lineH
       }
-      ctx.fillStyle = tint ? p.ink : p.ink_soft
-      ctx.fillText(r, rx + 5, mid + 3)
-      rx += w + 4
-    }
+
+      const badgeX = nameX + Math.max(...lines.map((l) => ctx.measureText(l).width)) + 8
+      const badgeY = mid - ((lines.length - 1) * lineH) / 2 - 6
+      const badgeColour =
+        badge === 'Prevention' ? p.prevention_accent : badge === 'Treatment' ? p.treatment_accent : p.ink_soft
+      ctx.globalAlpha = 0.12
+      ctx.fillStyle = badgeColour
+      roundRect(ctx, badgeX, badgeY, badgeW, 14, 7)
+      ctx.globalAlpha = 1
+      ctx.fillStyle = badge === 'Both' ? p.ink : badgeColour
+      ctx.font = `700 9px ${FONT}`
+      ctx.textAlign = 'center'
+      ctx.letterSpacing = '0.7px'
+      ctx.fillText(badgeText, badgeX + badgeW / 2, badgeY + 10)
+      ctx.letterSpacing = '0px'
+      ctx.textAlign = 'left'
+
+      // Phase chip, immediately after the indication badge. Single-hue ramp, so a
+      // darker chip reads as further along; the label stays in ink.
+      if (entry.highest_phase) {
+        const label = phaseLabel(meta, entry.highest_phase, true)
+        ctx.font = `700 9px ${FONT}`
+        const pw = ctx.measureText(label).width + 12
+        const px = badgeX + badgeW + 5
+        const tint = meta.phase_colours?.[entry.highest_phase]
+        if (tint) {
+          ctx.fillStyle = tint
+          roundRect(ctx, px, badgeY, pw, 14, 7)
+        } else {
+          ctx.strokeStyle = p.hairline
+          ctx.beginPath()
+          ctx.roundRect(px, badgeY, pw, 14, 7)
+          ctx.stroke()
+        }
+        ctx.fillStyle = tint ? p.ink : p.ink_soft
+        ctx.textAlign = 'center'
+        ctx.fillText(label, px + pw / 2, badgeY + 10)
+        ctx.textAlign = 'left'
+      }
+
+      if (marks.span) {
+        const bx = xPlot + geo.centre(marks.span.from)
+        const bw = geo.centre(marks.span.to) - geo.centre(marks.span.from)
+        ctx.globalAlpha = BAR_OPACITY
+        ctx.fillStyle = colour
+        roundRect(ctx, bx, mid - BAR_H / 2, bw, BAR_H, BAR_H / 2)
+        ctx.globalAlpha = 1
+      }
+
+      ctx.fillStyle = colour
+      for (const k of marks.dotIndices) {
+        ctx.beginPath()
+        ctx.arc(xPlot + geo.centre(k), mid, DOT_R, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      if (marks.notStated) {
+        ctx.beginPath()
+        ctx.arc(xPlot + geo.notStatedCentre, mid, DOT_R, 0, Math.PI * 2)
+        ctx.fillStyle = p.paper
+        ctx.fill()
+        ctx.strokeStyle = colour
+        ctx.lineWidth = 1.6
+        ctx.stroke()
+        ctx.lineWidth = 1
+      }
+
+      // Route chips, tinted per route. The tint is fill and border only; the
+      // letters stay in ink so the code never depends on the colour.
+      let rx = xRoute
+      ctx.font = `400 10px ${MONO}`
+      for (const r of entry.routes) {
+        const w = ctx.measureText(r).width + 10
+        if (rx + w > xRoute + cols.route) break
+        const tint = meta.route_colours?.[r]
+        ctx.beginPath()
+        ctx.roundRect(rx, mid - 8, w, 15, 2)
+        if (tint) {
+          ctx.globalAlpha = 0.14
+          ctx.fillStyle = tint
+          ctx.fill()
+          ctx.globalAlpha = 0.45
+          ctx.strokeStyle = tint
+          ctx.stroke()
+          ctx.globalAlpha = 1
+        } else {
+          ctx.strokeStyle = p.hairline
+          ctx.stroke()
+        }
+        ctx.fillStyle = tint ? p.ink : p.ink_soft
+        ctx.fillText(r, rx + 5, mid + 3)
+        rx += w + 4
+      }
 
 
-    ctx.font = `400 12px ${FONT}`
-    ctx.fillStyle = p.ink_soft
-    const devText =
-      entry.developers_full.length > 1
-        ? `${entry.developers_full[0]} +${entry.developers_full.length - 1}`
-        : (entry.developers_full[0] ?? '')
-    const devLines = wrap(ctx, devText, cols.dev, 2)
-    let dy = mid - ((devLines.length - 1) * 14) / 2 + 4
-    for (const line of devLines) {
-      ctx.fillText(line, xDev, dy)
-      dy += 14
-    }
-  })
+      ctx.font = `400 12px ${FONT}`
+      ctx.fillStyle = p.ink_soft
+      const devText =
+        entry.developers_full.length > 1
+          ? `${entry.developers_full[0]} +${entry.developers_full.length - 1}`
+          : (entry.developers_full[0] ?? '')
+      const devLines = wrap(ctx, devText, cols.dev, 2)
+      let dy = mid - ((devLines.length - 1) * 14) / 2 + 4
+      for (const line of devLines) {
+        ctx.fillText(line, xDev, dy)
+        dy += 14
+      }
+    })
+  } else if (view === 'agents') {
+    drawAgentsBody(ctx, bodyArea, rows, meta)
+  } else if (view === 'grid') {
+    drawGridBody(ctx, bodyArea, rows, meta)
+  } else {
+    drawChartsBody(ctx, bodyArea, rows, meta)
+  }
 
   // Slides have a fixed height, so the footer is pinned to the bottom rather
   // than following the last row.
-  y = layout === 'slide' ? H - pad - footerH - legendH : y + rows.length * ROW_H
+  y = bodyArea.y + bodyArea.h
 
   /* ---- legend ---- */
   ctx.strokeStyle = p.hairline
@@ -529,12 +600,12 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
     ctx.font = `600 9px ${FONT}`
     ctx.fillStyle = p.ink_soft
     ctx.letterSpacing = '1.2px'
-    const phaseLabel = 'HIGHEST PHASE'
-    ctx.fillText(phaseLabel, x0, y)
-    let px = x0 + ctx.measureText(phaseLabel).width + 20
+    const phaseKeyHeading = 'HIGHEST PHASE'
+    ctx.fillText(phaseKeyHeading, x0, y)
+    let px = x0 + ctx.measureText(phaseKeyHeading).width + 20
     ctx.letterSpacing = '0px'
     for (const ph of phasesHere) {
-      const label = ph.replace(/^Phase\s+/i, 'Ph ')
+      const label = phaseLabel(meta, ph, true)
       ctx.font = `700 9px ${FONT}`
       const w = ctx.measureText(label).width + 12
       ctx.fillStyle = meta.phase_colours?.[ph] ?? p.hairline
@@ -619,12 +690,306 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   return canvas
 }
 
+
+/* -------------------------------------------------- alternative view bodies */
+
+interface BodyArea {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+/** One row per agent, with a dot in the column for its most advanced phase. */
+function drawAgentsBody(
+  ctx: CanvasRenderingContext2D,
+  area: BodyArea,
+  rows: Entry[],
+  meta: Meta,
+) {
+  const p = meta.palette
+  const phases = meta.phase_order ?? []
+  const present = phases.filter((ph) => rows.some((e) => e.highest_phase === ph))
+  const cols = [...present, ...(rows.some((e) => !e.highest_phase) ? ['__none__'] : [])]
+  const nameW = Math.round(area.w * 0.42)
+  const colW = (area.w - nameW) / Math.max(1, cols.length)
+
+  // column headings
+  ctx.font = `600 10px ${FONT}`
+  ctx.fillStyle = p.ink_soft
+  ctx.letterSpacing = '1.4px'
+  ctx.fillText('AGENT', area.x, area.y - 10)
+  ctx.letterSpacing = '0px'
+  ctx.textAlign = 'center'
+  cols.forEach((c, i) => {
+    ctx.font = `600 10px ${FONT}`
+    ctx.fillStyle = p.ink
+    ctx.fillText(
+      c === '__none__' ? 'Not stated' : phaseLabel(meta, c, true),
+      area.x + nameW + colW * (i + 0.5),
+      area.y - 10,
+    )
+  })
+  ctx.textAlign = 'left'
+
+  ctx.strokeStyle = p.ink
+  ctx.beginPath()
+  ctx.moveTo(area.x, area.y + 0.5)
+  ctx.lineTo(area.x + area.w, area.y + 0.5)
+  ctx.stroke()
+
+  rows.forEach((e, i) => {
+    const top = area.y + i * ROW_H
+    const mid = top + ROW_H / 2
+
+    // phase column washes, so the progression still reads left to right
+    cols.forEach((c, k) => {
+      const tint = c === '__none__' ? null : meta.phase_colours?.[c]
+      if (!tint) return
+      ctx.globalAlpha = 0.28
+      ctx.fillStyle = tint
+      ctx.fillRect(area.x + nameW + colW * k, top, colW, ROW_H)
+      ctx.globalAlpha = 1
+    })
+
+    ctx.strokeStyle = p.hairline
+    ctx.beginPath()
+    ctx.moveTo(area.x, top + ROW_H + 0.5)
+    ctx.lineTo(area.x + area.w, top + ROW_H + 0.5)
+    ctx.stroke()
+
+    // Band tag, not a stage dot: the columns already encode phase.
+    const tagW = drawBandTag(ctx, meta, e.band, area.x, mid)
+
+    ctx.font = `400 12px ${FONT}`
+    ctx.fillStyle = p.ink
+    const lines = wrap(ctx, e.name_full, nameW - tagW - 12, 2)
+    let ny = mid - ((lines.length - 1) * 14) / 2 + 4
+    for (const line of lines) {
+      ctx.fillText(line, area.x + tagW + 4, ny)
+      ny += 14
+    }
+
+    cols.forEach((c, k) => {
+      const here = c === '__none__' ? !e.highest_phase : e.highest_phase === c
+      if (!here) return
+      ctx.fillStyle = p.ink
+      ctx.beginPath()
+      ctx.arc(area.x + nameW + colW * (k + 0.5), mid, 5, 0, Math.PI * 2)
+      ctx.fill()
+    })
+  })
+}
+
+/** Drug class down, phase across, agent names in the cells. */
+function drawGridBody(
+  ctx: CanvasRenderingContext2D,
+  area: BodyArea,
+  rows: Entry[],
+  meta: Meta,
+) {
+  const p = meta.palette
+  const phases = meta.phase_order ?? []
+  const present = phases.filter((ph) => rows.some((e) => e.highest_phase === ph))
+  const cols = [...present, ...(rows.some((e) => !e.highest_phase) ? ['__none__'] : [])]
+  const classes = (meta.class_order ?? []).filter((c) => rows.some((e) => e.class_group === c))
+  const unclassified = rows.some((e) => !e.class_group)
+  const rowKeys = [...classes, ...(unclassified ? ['__none__'] : [])]
+
+  const labelW = Math.round(area.w * 0.16)
+  const colW = (area.w - labelW) / Math.max(1, cols.length)
+  const rowH = area.h / Math.max(1, rowKeys.length)
+
+  ctx.font = `600 10px ${FONT}`
+  ctx.fillStyle = p.ink_soft
+  ctx.letterSpacing = '1.4px'
+  ctx.fillText('CLASS', area.x, area.y - 10)
+  ctx.letterSpacing = '0px'
+  ctx.textAlign = 'center'
+  cols.forEach((c, i) => {
+    ctx.fillStyle = p.ink
+    ctx.font = `600 10px ${FONT}`
+    ctx.fillText(
+      c === '__none__' ? 'Not stated' : phaseLabel(meta, c, true),
+      area.x + labelW + colW * (i + 0.5),
+      area.y - 10,
+    )
+  })
+  ctx.textAlign = 'left'
+
+  ctx.strokeStyle = p.ink
+  ctx.beginPath()
+  ctx.moveTo(area.x, area.y + 0.5)
+  ctx.lineTo(area.x + area.w, area.y + 0.5)
+  ctx.stroke()
+
+  rowKeys.forEach((cls, r) => {
+    const top = area.y + r * rowH
+    const inCls = rows.filter((e) => (cls === '__none__' ? !e.class_group : e.class_group === cls))
+
+    cols.forEach((c, k) => {
+      const tint = c === '__none__' ? null : meta.phase_colours?.[c]
+      const items = inCls.filter((e) =>
+        c === '__none__' ? !e.highest_phase : e.highest_phase === c,
+      )
+      if (tint && items.length) {
+        ctx.globalAlpha = 0.4
+        ctx.fillStyle = tint
+        ctx.fillRect(area.x + labelW + colW * k, top, colW, rowH)
+        ctx.globalAlpha = 1
+      }
+      // agent names, as many as fit
+      ctx.font = `400 9px ${FONT}`
+      ctx.fillStyle = p.ink
+      let ty = top + 12
+      for (const e of items) {
+        if (ty > top + rowH - 3) break
+        const cx = area.x + labelW + colW * k + 5
+        const tagW = drawBandTag(ctx, meta, e.band, cx, ty - 3, 7)
+        ctx.font = `400 9px ${FONT}`
+        ctx.fillStyle = p.ink
+        const line = wrap(ctx, e.name_full, colW - 12 - tagW, 1)[0] ?? ''
+        ctx.fillText(line, cx + tagW + 3, ty)
+        ty += 11
+      }
+    })
+
+    ctx.strokeStyle = p.hairline
+    ctx.beginPath()
+    ctx.moveTo(area.x, top + rowH + 0.5)
+    ctx.lineTo(area.x + area.w, top + rowH + 0.5)
+    ctx.stroke()
+
+    ctx.font = `600 11px ${FONT}`
+    ctx.fillStyle = p.ink
+    const lines = wrap(ctx, cls === '__none__' ? 'Class not stated' : cls, labelW - 10, 2)
+    let ly = top + 14
+    for (const line of lines) {
+      ctx.fillText(line, area.x, ly)
+      ly += 12
+    }
+    ctx.font = `400 9px ${MONO}`
+    ctx.fillStyle = p.ink_soft
+    ctx.fillText(String(inCls.length), area.x, ly)
+  })
+}
+
+/** The two stacked bar charts, side by side. */
+function drawChartsBody(
+  ctx: CanvasRenderingContext2D,
+  area: BodyArea,
+  rows: Entry[],
+  meta: Meta,
+) {
+  const gap = 48
+  const w = (area.w - gap) / 2
+  drawOneChart(ctx, { ...area, w }, columnsByClass(rows, meta), 'Agents by class',
+    'split by most advanced trial phase', phaseLegend(rows, meta), meta)
+  drawOneChart(ctx, { ...area, x: area.x + w + gap, w }, columnsByPhase(rows, meta),
+    'Agents by phase', 'split by drug class', classLegend(rows, meta), meta)
+}
+
+function drawOneChart(
+  ctx: CanvasRenderingContext2D,
+  area: BodyArea,
+  columns: { label: string; total: number; segments: { key: string; items: Entry[]; colour: string }[] }[],
+  title: string,
+  subtitle: string,
+  legend: { key: string; colour: string }[],
+  meta: Meta,
+) {
+  const p = meta.palette
+  ctx.font = `600 13px ${FONT}`
+  ctx.fillStyle = p.ink
+  ctx.fillText(title, area.x, area.y + 2)
+  ctx.font = `400 10px ${FONT}`
+  ctx.fillStyle = p.ink_soft
+  ctx.fillText(subtitle, area.x, area.y + 16)
+
+  const plotTop = area.y + 30
+  const plotBottom = area.y + area.h - 54
+  const plotH = Math.max(40, plotBottom - plotTop)
+  const left = area.x + 26
+  const plotW = area.w - 26
+  const { top, step } = axisScale(Math.max(...columns.map((c) => c.total), 1))
+  const y = (v: number) => plotBottom - (v / top) * plotH
+  const band = plotW / Math.max(1, columns.length)
+  const barW = Math.min(46, band * 0.6)
+
+  for (let t = 0; t <= top; t += step) {
+    ctx.strokeStyle = p.hairline
+    ctx.beginPath()
+    ctx.moveTo(left, y(t) + 0.5)
+    ctx.lineTo(area.x + area.w, y(t) + 0.5)
+    ctx.stroke()
+    ctx.font = `400 9px ${MONO}`
+    ctx.fillStyle = p.ink_soft
+    ctx.textAlign = 'right'
+    ctx.fillText(String(t), left - 6, y(t) + 3)
+    ctx.textAlign = 'left'
+  }
+
+  columns.forEach((col, i) => {
+    const cx = left + band * i + band / 2
+    let cursor = 0
+    for (const seg of col.segments) {
+      const y0 = y(cursor + seg.items.length)
+      const y1 = y(cursor)
+      cursor += seg.items.length
+      ctx.fillStyle = seg.colour
+      roundRect(ctx, cx - barW / 2, y0, barW, Math.max(1, y1 - y0 - 2), 2)
+    }
+    ctx.font = `600 10px ${FONT}`
+    ctx.fillStyle = p.ink
+    ctx.textAlign = 'center'
+    ctx.fillText(String(col.total), cx, y(col.total) - 5)
+    ctx.save()
+    ctx.translate(cx, plotBottom + 12)
+    ctx.rotate(-Math.PI / 5)
+    ctx.font = `400 9px ${FONT}`
+    ctx.fillStyle = p.ink_soft
+    ctx.textAlign = 'right'
+    ctx.fillText(col.label, 0, 0)
+    ctx.restore()
+    ctx.textAlign = 'left'
+  })
+
+  // legend beneath, wrapping across the chart width
+  let lx = area.x
+  let ly = plotBottom + 44
+  ctx.font = `400 9px ${FONT}`
+  for (const l of legend) {
+    const tw = ctx.measureText(l.key).width + 18
+    if (lx + tw > area.x + area.w) {
+      lx = area.x
+      ly += 12
+    }
+    ctx.fillStyle = l.colour
+    roundRect(ctx, lx, ly - 7, 8, 8, 2)
+    ctx.fillStyle = p.ink_soft
+    ctx.fillText(l.key, lx + 12, ly)
+    lx += tw
+  }
+}
+
 /* ------------------------------------------------------------- public API */
 
 /**
  * How many rows fit on one 16:9 slide. Uses exactly the same chrome constants
  * as the renderer, so the body always fills the space available to it.
  */
+/**
+ * How many rows fit one slide, per view.
+ *
+ * The timeline and the agents table paginate by row. The class grid and the
+ * charts are single objects: splitting them would break the very comparison
+ * they exist to show, so they always render on one sheet.
+ */
+export function rowsPerSheet(meta: Meta, view: ExportView = 'timeline'): number {
+  if (view === 'grid' || view === 'charts') return Number.MAX_SAFE_INTEGER
+  return rowsPerSlide(meta)
+}
+
 export function rowsPerSlide(meta: Meta): number {
   const pad = SHEET.slide.pad
   const hasAck = (meta.acknowledgements?.length ?? 0) > 0
@@ -634,7 +999,7 @@ export function rowsPerSlide(meta: Meta): number {
 }
 
 export function slideCount(opts: ExportOptions): number {
-  return Math.max(1, Math.ceil(opts.entries.length / rowsPerSlide(opts.meta)))
+  return Math.max(1, Math.ceil(opts.entries.length / rowsPerSheet(opts.meta, opts.view)))
 }
 
 async function toBlob(canvas: HTMLCanvasElement): Promise<Blob> {
@@ -657,7 +1022,7 @@ export async function renderFigure(opts: ExportOptions): Promise<Blob> {
 /** A series of 16:9 canvases, one per slide. */
 export async function renderSlides(opts: ExportOptions): Promise<HTMLCanvasElement[]> {
   const assets = await prepare(opts)
-  const per = rowsPerSlide(opts.meta)
+  const per = rowsPerSheet(opts.meta, opts.view)
   const total = Math.max(1, Math.ceil(opts.entries.length / per))
   const out: HTMLCanvasElement[] = []
   for (let i = 0; i < total; i++) {

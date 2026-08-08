@@ -106,18 +106,17 @@ export function ViewBar({
 
       <span className="flex-1" />
 
-      {mode === 'timeline' && (
       <ExportMenu
         options={{
           entries,
           meta,
+          view: mode === 'charts' ? 'charts' : mode,
           indicationLabel,
           accent,
           arranged: custom,
           hiddenCount: hidden,
         }}
       />
-      )}
 
       {listOpen && hiddenEntries.length > 0 && (
         <ul className="w-full space-y-1 border-l-2 border-hairline pt-1 pl-4">
@@ -205,8 +204,12 @@ function ExportMenu({ options }: { options: ExportOptions }) {
       {open && (
         <div className="absolute top-full right-0 z-30 mt-1 w-80 rounded-md border border-hairline bg-white p-1.5 shadow-lg">
           <Option
-            title="Slides, one PNG per slide"
-            detail={`${slides} 16:9 ${slides === 1 ? 'image' : 'images'} in a ZIP, ten rows each. Unzip and drop straight onto PowerPoint slides.`}
+            title={slides === 1 ? 'Slide, one 16:9 PNG' : 'Slides, one PNG per slide'}
+            detail={
+              slides === 1
+                ? 'A single 16:9 image. Drop straight onto a PowerPoint slide.'
+                : `${slides} 16:9 images in a ZIP. Unzip and drop straight onto PowerPoint slides.`
+            }
             recommended
             onClick={() =>
               run(

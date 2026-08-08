@@ -70,6 +70,12 @@ META = {
  # against a target of 8. Three hue families at two lightnesses each, which also
  # groups sensibly: amber = non-injection, blue = tissue injection, teal = IV and
  # ring. The chip letters stay in ink, so nothing depends on colour alone.
+ # Wash colours for the compound / formulation tag shown beside each name.
+ # Every other hue on that row is already spoken for: the stage dot is green,
+ # orange, cyan or grey, the phase chip is on a violet ramp and the route codes
+ # are orange, blue and teal. Olive and crimson are what is left, and they are
+ # used at 15% so they read as a wash, not as a fourth colour scale.
+ 'band_colours':{'formulations':'#4F7A2F','compounds':'#B0304A'},
  'route_colours':{'PO':'#B66D00','TD':'#834300',
                   'SC':'#6975D8','IM':'#2C4FA2',
                   'IV':'#006B69','VR':'#009C84'},
@@ -81,6 +87,10 @@ META = {
  # at 264). Verified light-to-dark monotone, visible steps, and ink text at
  # 4.7:1 or better on every step, so the label never depends on the tint.
  'phase_order':PHASES,
+ # Display overrides. The STORED value stays 'Phase IV' so the workbook
+ # dropdown, the validation and any existing curation keep working; only what
+ # the reader sees changes. Add another entry here to relabel any other phase.
+ 'phase_labels':{'Phase IV':'Marketed'},
  'phase_colours':{'Preclinical':'#F1F0F7','Phase I':'#E4E1F1','Phase I/II':'#D5D0E9',
                   'Phase II':'#C3BBDE','Phase II/III':'#AFA4D1','Phase III':'#9A8CC3',
                   'Phase IV':'#8878B8'},

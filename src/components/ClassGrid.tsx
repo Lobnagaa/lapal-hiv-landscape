@@ -21,8 +21,8 @@
  * vocabulary exists alongside the free-text drug_class.
  */
 import type { Entry, Meta } from '../types'
-import { indicationBadge } from '../types'
-import { stageVar } from '../theme'
+import { indicationBadge, phaseLabel } from '../types'
+import { BandTag } from './BandTag'
 
 export interface ClassGridProps {
   entries: Entry[]
@@ -101,7 +101,7 @@ export function ClassGrid({ entries, meta, onHover, onLeave, onHide }: ClassGrid
             return (
               <div key={p} className="px-2 pt-3 pb-2">
                 <div className="text-[11px] font-semibold text-ink">
-                  {p === '__none__' ? 'Phase not stated' : p}
+                  {p === '__none__' ? 'Phase not stated' : phaseLabel(meta, p)}
                 </div>
                 <div className="font-mono text-[10px] tabular-nums text-ink-soft">{n}</div>
               </div>
@@ -147,6 +147,7 @@ export function ClassGrid({ entries, meta, onHover, onLeave, onHide }: ClassGrid
                         <AgentChip
                           key={e.id}
                           entry={e}
+                          meta={meta}
                           onHover={onHover}
                           onLeave={onLeave}
                           onHide={onHide}
@@ -165,17 +166,19 @@ export function ClassGrid({ entries, meta, onHover, onLeave, onHide }: ClassGrid
 }
 
 /**
- * One agent. The dot carries development stage, so the grid keeps the same
- * colour language as the timeline; the chip itself is neutral, because the
- * cell's phase tint is already doing the ordinal work behind it.
+ * One agent. The leading tag says whether this is a formulation or the
+ * underlying compound: the cell already encodes phase, so repeating stage here
+ * would say the same thing twice.
  */
 function AgentChip({
   entry,
+  meta,
   onHover,
   onLeave,
   onHide,
 }: {
   entry: Entry
+  meta: Meta
   onHover: (e: Entry, x: number, y: number) => void
   onLeave: () => void
   onHide: (id: string) => void
@@ -205,12 +208,9 @@ function AgentChip({
         href ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      <span
-        aria-hidden
-        title={entry.stage}
-        className="mt-1 inline-block size-1.5 shrink-0 rounded-full"
-        style={{ background: stageVar(entry.stage) }}
-      />
+      <span className="mt-px">
+        <BandTag band={entry.band} meta={meta} />
+      </span>
       <span className="line-clamp-2 flex-1 text-[11px] leading-tight text-ink">{entry.name_full}</span>
       <span
         role="button"

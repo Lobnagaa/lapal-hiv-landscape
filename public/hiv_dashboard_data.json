@@ -37,6 +37,10 @@
    "TD": "transdermal"
   },
   "route_legend_label": "Investigated and/or approved routes of administration",
+  "band_colours": {
+   "formulations": "#4F7A2F",
+   "compounds": "#B0304A"
+  },
   "route_colours": {
    "PO": "#B66D00",
    "TD": "#834300",
@@ -54,6 +58,9 @@
    "Phase III",
    "Phase IV"
   ],
+  "phase_labels": {
+   "Phase IV": "Marketed"
+  },
   "phase_colours": {
    "Preclinical": "#F1F0F7",
    "Phase I": "#E4E1F1",

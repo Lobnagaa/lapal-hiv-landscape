@@ -13,8 +13,10 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Entry, Meta } from '../types'
+import { phaseLabel } from '../types'
 import { BAR_H, BAR_OPACITY, DOT_R, rowMarks } from '../encoding'
 import { stageVar } from '../theme'
+import { BandTag } from './BandTag'
 
 export function Legend({
   entries,
@@ -25,10 +27,13 @@ export function Legend({
    * route and phase apply to both views.
    */
   showIntervalKeys = true,
+  showBandKey = false,
 }: {
   entries: Entry[]
   meta: Meta
   showIntervalKeys?: boolean
+  /** Every view except the charts tags rows C or F/R; explain it wherever it shows. */
+  showBandKey?: boolean
 }) {
   const [open, setOpen] = useState(false)
 
@@ -162,13 +167,31 @@ export function Legend({
                   className="rounded-full px-1.5 py-px text-[9px] font-semibold tracking-[0.04em] whitespace-nowrap"
                   style={{ background: meta.phase_colours?.[ph], color: 'var(--color-ink)' }}
                 >
-                  {ph.replace(/^Phase\s+/i, 'Ph ')}
+                  {phaseLabel(meta, ph, true)}
                 </span>
               ))}
             </span>
             <span>
               the most advanced clinical trial on record for that entry. Darker is further along.
               No chip means none is recorded.
+            </span>
+          </p>
+        )}
+
+        {showBandKey && (
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Entry type
+            </span>
+            <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="flex items-center gap-1.5">
+                <BandTag band="formulations" meta={meta} />
+                <span className="text-ink">formulation or regimen</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <BandTag band="compounds" meta={meta} />
+                <span className="text-ink">underlying compound</span>
+              </span>
             </span>
           </p>
         )}

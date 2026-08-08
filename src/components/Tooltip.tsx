@@ -11,7 +11,7 @@
  */
 import { useEffect, useState } from 'react'
 import type { Entry, Meta } from '../types'
-import { indicationBadge } from '../types'
+import { indicationBadge, phaseLabel } from '../types'
 import { stageVar } from '../theme'
 
 export interface TooltipTarget {
@@ -89,7 +89,9 @@ export function Tooltip({
           label="Stage"
           value={`${entry.stage} · ${meta.stage_tiers[entry.stage]?.definition ?? ''}`}
         />
-        {entry.highest_phase && <Field label="Highest phase" value={entry.highest_phase} />}
+        {entry.highest_phase && (
+          <Field label="Highest phase" value={phaseLabel(meta, entry.highest_phase)} />
+        )}
         <Field
           label="Route"
           value={

@@ -13,8 +13,8 @@
  */
 import { useMemo, useRef, useState } from 'react'
 import type { Entry, Meta } from '../types'
-import { indicationBadge } from '../types'
-import { stageVar } from '../theme'
+import { indicationBadge, phaseLabel } from '../types'
+import { BandTag } from './BandTag'
 
 /** Only ever open a plain web address. Mirrors the guard in Timeline.tsx. */
 function safeUrl(url: string | null): string | null {
@@ -66,6 +66,12 @@ export function AgentPhase({
   const dropIndexRef = useRef<number | null>(null)
   /** The row is only draggable while the grip is held; see Timeline.tsx. */
   const [armedId, setArmedId] = useState<string | null>(null)
+  /**
+   * A drag ends with a click in some browsers. Without this the release opened
+   * the LAPaL entry instead of finishing the reorder, which read as "dragging
+   * does not work". Same guard the timeline already had.
+   */
+  const draggedRef = useRef(false)
 
   const phases = meta.phase_order ?? []
   const phasesPresent = phases.filter((p) => entries.some((e) => e.highest_phase === p))
@@ -160,7 +166,7 @@ export function AgentPhase({
               return (
                 <div key={p} className="px-2 pt-3 pb-2 text-center">
                   <div className="text-[11px] leading-tight font-semibold text-ink">
-                    {p === '__none__' ? 'Not stated' : p.replace(/^Phase\s+/, 'Phase ')}
+                    {p === '__none__' ? 'Not stated' : phaseLabel(meta, p)}
                   </div>
                   <div className="font-mono text-[10px] tabular-nums text-ink-soft">{n}</div>
                 </div>
@@ -183,6 +189,7 @@ export function AgentPhase({
                   ev.dataTransfer.effectAllowed = 'move'
                   ev.dataTransfer.setData('text/plain', e.id)
                   dragIdRef.current = e.id
+                  draggedRef.current = true
                   setDragId(e.id)
                 }}
                 onDragEnd={() => {
@@ -191,6 +198,10 @@ export function AgentPhase({
                   dropIndexRef.current = null
                   setDragId(null)
                   setDropIndex(null)
+                  // Clear on the next tick, after any trailing click is swallowed.
+                  setTimeout(() => {
+                    draggedRef.current = false
+                  }, 0)
                 }}
                 onDragOver={(ev) => {
                   ev.preventDefault()
@@ -233,7 +244,10 @@ export function AgentPhase({
                   onHover(e, r.left + 40, r.bottom)
                 }}
                 onBlur={onLeave}
-                onClick={() => href && window.open(href, '_blank', 'noopener,noreferrer')}
+                onClick={() => {
+                  if (draggedRef.current) return
+                  if (href) window.open(href, '_blank', 'noopener,noreferrer')
+                }}
                 onKeyDown={(ev) => {
                   if (ev.altKey && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown')) {
                     ev.preventDefault()
@@ -260,6 +274,9 @@ export function AgentPhase({
               >
                 {dropIndex === rowIndex && (
                   <span aria-hidden className="pointer-events-none absolute inset-x-0 -top-px h-0.5 bg-accent" />
+                )}
+                {dropIndex === rowIndex + 1 && rowIndex === rows.length - 1 && (
+                  <span aria-hidden className="pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-accent" />
                 )}
 
                 {/* grip to reorder, eye to hide. Same gesture split as the timeline:
@@ -300,12 +317,7 @@ export function AgentPhase({
                 </div>
 
                 <div className="flex min-w-0 items-center gap-1.5 px-2 py-2">
-                  <span
-                    aria-hidden
-                    title={e.stage}
-                    className="inline-block size-2 shrink-0 rounded-full"
-                    style={{ background: stageVar(e.stage) }}
-                  />
+                  <BandTag band={e.band} meta={meta} />
                   <span className="line-clamp-2 text-[12px] leading-tight text-ink">
                     {e.name_full}
                   </span>
@@ -330,7 +342,7 @@ export function AgentPhase({
                         <span
                           aria-hidden
                           className="inline-block size-2.5 rounded-full"
-                          style={{ background: stageVar(e.stage) }}
+                          style={{ background: 'var(--color-ink)' }}
                         />
                       )}
                     </div>

@@ -23,83 +23,23 @@
  * segment is hoverable. Counts are labelled only on the column total, not on
  * every segment, which would be noise.
  */
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { Entry, Meta } from '../types'
+import {
+  type Column,
+  classLegend,
+  columnsByClass,
+  columnsByPhase,
+  phaseLegend,
+  axisScale,
+} from '../charts'
 
 const H = 260
 const PAD = { top: 16, right: 12, bottom: 56, left: 34 }
 /** Gap between stacked segments, so they read as separate blocks. */
 const SEG_GAP = 2
 
-interface Segment {
-  key: string
-  value: number
-  colour: string
-}
-interface Column {
-  label: string
-  total: number
-  segments: Segment[]
-}
-
-/** Fold every combination class into one series, and keep unclassified visible. */
-function foldClass(meta: Meta, cls: string | null): string {
-  if (!cls) return 'Not stated'
-  return (meta.class_singles ?? []).includes(cls) ? cls : 'Combination'
-}
-
 export function PhaseCharts({ entries, meta }: { entries: Entry[]; meta: Meta }) {
-  const phases = meta.phase_order ?? []
-
-  /** Chart 1: one column per class, stacked by phase. */
-  const byClass = useMemo<Column[]>(() => {
-    const order = (meta.class_singles ?? []).filter((c) =>
-      entries.some((e) => foldClass(meta, e.class_group) === c),
-    )
-    const extra = ['Combination', 'Not stated'].filter((c) =>
-      entries.some((e) => foldClass(meta, e.class_group) === c),
-    )
-    return [...order, ...extra].map((cls) => {
-      const inCls = entries.filter((e) => foldClass(meta, e.class_group) === cls)
-      const segments: Segment[] = []
-      for (const p of phases) {
-        const n = inCls.filter((e) => e.highest_phase === p).length
-        if (n) segments.push({ key: p, value: n, colour: meta.phase_colours?.[p] ?? '#CCC' })
-      }
-      const none = inCls.filter((e) => !e.highest_phase).length
-      if (none) segments.push({ key: 'Phase not stated', value: none, colour: '#E4E7EB' })
-      return { label: cls, total: inCls.length, segments }
-    })
-  }, [entries, meta, phases])
-
-  /** Chart 2: one column per phase, stacked by class. */
-  const byPhase = useMemo<Column[]>(() => {
-    const classOrder = [
-      ...(meta.class_singles ?? []),
-      'Combination',
-      'Not stated',
-    ].filter((c) => entries.some((e) => foldClass(meta, e.class_group) === c))
-    const cols = [
-      ...phases.filter((p) => entries.some((e) => e.highest_phase === p)),
-      ...(entries.some((e) => !e.highest_phase) ? ['__none__'] : []),
-    ]
-    return cols.map((p) => {
-      const inP = entries.filter((e) =>
-        p === '__none__' ? !e.highest_phase : e.highest_phase === p,
-      )
-      const segments: Segment[] = []
-      for (const cls of classOrder) {
-        const n = inP.filter((e) => foldClass(meta, e.class_group) === cls).length
-        if (n) segments.push({ key: cls, value: n, colour: meta.class_colours?.[cls] ?? '#9AA3AE' })
-      }
-      return {
-        label: p === '__none__' ? 'Not stated' : p.replace(/^Phase\s+/, 'Ph '),
-        total: inP.length,
-        segments,
-      }
-    })
-  }, [entries, meta, phases])
-
   if (entries.length === 0) {
     return (
       <div className="border-t border-hairline py-20 text-center">
@@ -115,23 +55,14 @@ export function PhaseCharts({ entries, meta }: { entries: Entry[]; meta: Meta })
       <StackedBars
         title="Agents by class"
         subtitle="Each bar split by most advanced trial phase. Darker is further along."
-        columns={byClass}
-        legend={[
-          ...phases
-            .filter((p) => entries.some((e) => e.highest_phase === p))
-            .map((p) => ({ key: p.replace(/^Phase\s+/, 'Ph '), colour: meta.phase_colours?.[p] ?? '#CCC' })),
-          ...(entries.some((e) => !e.highest_phase)
-            ? [{ key: 'Not stated', colour: '#E4E7EB' }]
-            : []),
-        ]}
+        columns={columnsByClass(entries, meta)}
+        legend={phaseLegend(entries, meta)}
       />
       <StackedBars
         title="Agents by phase"
         subtitle="Each bar split by drug class. Combination products are grouped."
-        columns={byPhase}
-        legend={[...(meta.class_singles ?? []), 'Combination', 'Not stated']
-          .filter((c) => entries.some((e) => foldClass(meta, e.class_group) === c))
-          .map((c) => ({ key: c, colour: meta.class_colours?.[c] ?? '#9AA3AE' }))}
+        columns={columnsByPhase(entries, meta)}
+        legend={classLegend(entries, meta)}
       />
     </div>
   )
@@ -148,13 +79,14 @@ function StackedBars({
   columns: Column[]
   legend: { key: string; colour: string }[]
 }) {
-  const [hover, setHover] = useState<{ col: string; seg: string; n: number } | null>(null)
+  // Hovering a segment names the agents in it. The counts alone answer "how
+  // many"; the reader's next question is always "which ones", and until now
+  // that meant leaving the chart for another view.
+  const [hover, setHover] = useState<{ col: string; seg: string; items: Entry[] } | null>(null)
 
   const width = 560
   const max = Math.max(1, ...columns.map((c) => c.total))
-  // A tidy axis: step up in ones until it gets tall, then twos.
-  const step = max <= 6 ? 1 : max <= 12 ? 2 : 5
-  const top = Math.ceil(max / step) * step
+  const { top, step } = axisScale(max)
   const plotH = H - PAD.top - PAD.bottom
   const plotW = width - PAD.left - PAD.right
   const bandW = plotW / Math.max(1, columns.length)
@@ -199,9 +131,9 @@ function StackedBars({
           return (
             <g key={col.label}>
               {col.segments.map((seg) => {
-                const y0 = y(cursor + seg.value)
+                const y0 = y(cursor + seg.items.length)
                 const y1 = y(cursor)
-                cursor += seg.value
+                cursor += seg.items.length
                 const h = Math.max(1, y1 - y0 - SEG_GAP)
                 const active = hover?.col === col.label && hover?.seg === seg.key
                 return (
@@ -215,10 +147,12 @@ function StackedBars({
                     fill={seg.colour}
                     stroke={active ? 'var(--color-ink)' : 'none'}
                     strokeWidth={active ? 1.5 : 0}
-                    onMouseEnter={() => setHover({ col: col.label, seg: seg.key, n: seg.value })}
+                    onMouseEnter={() =>
+                      setHover({ col: col.label, seg: seg.key, items: seg.items })
+                    }
                     onMouseLeave={() => setHover(null)}
                   >
-                    <title>{`${col.label} · ${seg.key}: ${seg.value}`}</title>
+                    <title>{`${col.label} · ${seg.key}: ${seg.items.length}`}</title>
                   </rect>
                 )
               })}
@@ -267,9 +201,19 @@ function StackedBars({
         ))}
       </div>
 
-      <p className="mt-1 min-h-[16px] text-[11px] text-ink">
-        {hover ? `${hover.col} · ${hover.seg}: ${hover.n}` : ''}
-      </p>
+      {/* Reserve the space so the chart does not jump as the pointer moves. */}
+      <div className="mt-1 min-h-[74px] rounded border border-transparent px-1">
+        {hover && (
+          <>
+            <p className="text-[11px] font-semibold text-ink">
+              {hover.col} · {hover.seg}: {hover.items.length}
+            </p>
+            <p className="text-[11px] leading-snug text-ink-soft">
+              {hover.items.map((e) => e.name_full).join(', ')}
+            </p>
+          </>
+        )}
+      </div>
     </figure>
   )
 }

@@ -20,11 +20,12 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import type { Entry, Meta } from '../types'
-import { indicationBadge } from '../types'
+import { indicationBadge, phaseLabel } from '../types'
 import { AXIS_H, BAR_H, BAR_OPACITY, DOT_R, ROW_H, axisGeometry, groupEntries, rowMarks } from '../encoding'
 import { stageVar } from '../theme'
 import { useMediaQuery } from '../useMediaQuery'
 import { Tooltip, type TooltipTarget } from './Tooltip'
+import { BandTag } from './BandTag'
 
 /**
  * Only ever open a plain web address.
@@ -82,7 +83,7 @@ function PhaseChip({ meta, phase }: { meta: Meta; phase: string | null }) {
           : { border: '1px solid var(--color-hairline)', color: 'var(--color-ink-soft)' }
       }
     >
-      {phase.replace(/^Phase\s+/i, 'Ph ')}
+      {phaseLabel(meta, phase, true)}
     </span>
   )
 }
@@ -507,6 +508,7 @@ function EntryRow({
           className="inline-block size-2 shrink-0 rounded-full"
           style={{ background: stageVar(entry.stage) }}
         />
+        <BandTag band={entry.band} meta={meta} />
         <span className="line-clamp-2 text-[13px] leading-tight text-ink" title={entry.name_full}>
           {entry.name_full}
         </span>
