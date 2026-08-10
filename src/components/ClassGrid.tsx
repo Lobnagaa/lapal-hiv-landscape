@@ -96,6 +96,7 @@ export function ClassGrid({
   onReorderCell,
   order,
 }: ClassGridProps) {
+  const [sort, setSort] = useState<'default' | 'az'>('default')
   const phases = meta.phase_order ?? []
   // Only the classes and phases actually present, so the grid does not carry
   // empty rows or columns for vocabulary that is not in the current selection.
@@ -107,10 +108,22 @@ export function ClassGrid({
   const noPhase = entries.filter((e) => !e.highest_phase)
 
   const cols = [...phasesPresent, ...(noPhase.length ? ['__none__'] : [])]
-  const rows = arrangeClasses(
-    [...classes, ...(unclassified.length ? ['__none__'] : [])],
-    order,
-  )
+  const baseRows = [...classes, ...(unclassified.length ? ['__none__'] : [])]
+  // A dragged row always wins, same rule the agents table's sort uses: once
+  // the reader has taken over the order, silently re-sorting under them would
+  // undo it. Otherwise the preset decides: build_data.py's own class_order
+  // (most agents first), or alphabetical.
+  const customRows = order.classOrder.length > 0
+  const rows = customRows
+    ? arrangeClasses(baseRows, order)
+    : sort === 'az'
+      ? [...baseRows].sort((a, b) =>
+          (a === '__none__' ? 'Class not stated' : a).localeCompare(
+            b === '__none__' ? 'Class not stated' : b,
+            'en-GB',
+          ),
+        )
+      : baseRows
 
   // Drag state lives in refs, not state: dragover fires far faster than React
   // re-renders, and reading a stale copy is what broke the reorder in the other
@@ -161,7 +174,42 @@ export function ClassGrid({
   const gridTemplate = `minmax(150px, 180px) repeat(${cols.length}, minmax(155px, 1fr))`
 
   return (
-    <div className="overflow-x-auto">
+    <div>
+      <div className="flex flex-wrap items-center gap-3 py-2">
+        <span className="flex-1" />
+        <span className="text-[10px] font-bold tracking-[0.14em] text-ink-soft uppercase">
+          Sort
+        </span>
+        {(
+          [
+            ['default', 'Most agents'],
+            ['az', 'A to Z'],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={!customRows && sort === key}
+            disabled={customRows}
+            title={customRows ? 'Reset the row order to sort again' : undefined}
+            onClick={() => setSort(key)}
+            className="rounded-full border px-2.5 py-1 text-[11px] transition-colors"
+            style={{
+              borderColor: !customRows && sort === key ? 'var(--color-accent)' : 'var(--color-hairline)',
+              background:
+                !customRows && sort === key
+                  ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)'
+                  : 'transparent',
+              color: !customRows && sort === key ? 'var(--color-accent)' : 'var(--color-ink-soft)',
+              opacity: customRows ? 0.45 : 1,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="overflow-x-auto">
       <div className="min-w-[1150px]">
         {/* column headers */}
         <div
@@ -344,6 +392,7 @@ export function ClassGrid({
             </div>
           )
         })}
+      </div>
       </div>
     </div>
   )

@@ -29,7 +29,13 @@ import { AgentPhase } from './components/AgentPhase'
 import { PhaseCharts } from './components/PhaseCharts'
 import { Tooltip, type TooltipTarget } from './components/Tooltip'
 import { accentFor, applyAccent } from './theme'
-import { groupEntries, sortByAdminOrder, sortByInterval, sortEntriesByInterval } from './encoding'
+import {
+  groupEntries,
+  sortByAdminOrder,
+  sortByDeveloper,
+  sortByInterval,
+  sortEntriesByInterval,
+} from './encoding'
 import { type FilterState, applyFilters, defaultFilters, summarise } from './filters'
 import {
   type ViewState,
@@ -225,7 +231,15 @@ export default function App() {
                 }}
               />
             )}
-            {mode === 'charts' && <PhaseCharts entries={visible} meta={meta} />}
+            {mode === 'charts' && (
+              <PhaseCharts
+                entries={visible}
+                meta={meta}
+                order={view}
+                onReorderClasses={(classes) => setView((v) => setClassOrder(v, classes))}
+                onHideClass={(ids) => setView((v) => hideMany(v, ids))}
+              />
+            )}
             {gridTip && mode !== 'charts' && (
               <Tooltip target={gridTip} meta={meta} onDismiss={() => setGridTip(null)} />
             )}
@@ -244,6 +258,7 @@ export default function App() {
             onMove: (id, toIndex) => setView((v) => moveEntry(visible, v, id, toIndex)),
             onNudge: (id, delta) => setView((v) => nudge(visible, v, id, delta)),
             onHide: (id) => setView((v) => toggleHidden(v, id)),
+            onSortByDeveloper: () => setView((v) => setOrder(v, sortByDeveloper(visible))),
           }}
         />
         )}

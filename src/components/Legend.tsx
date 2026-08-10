@@ -24,6 +24,10 @@ import { phaseLabel } from '../types'
 import { BAR_H, BAR_OPACITY, DOT_R, rowMarks } from '../encoding'
 import { stageVar } from '../theme'
 import { BandTag } from './BandTag'
+import { OnHoldChip } from './OnHoldChip'
+
+/** The small-caps row label used throughout this legend. Bold, so the category names read at a glance. */
+const LABEL = 'text-[10px] font-bold tracking-[0.14em] text-ink-soft uppercase'
 
 export function Legend({
   entries,
@@ -62,44 +66,7 @@ export function Legend({
 
   return (
     <div className="border-b border-hairline py-4">
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          {present.dot && (
-            <MarkKey label="stated interval">
-              <circle cx={11} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
-            </MarkKey>
-          )}
-          {present.range && (
-            <MarkKey label="range studied">
-              <rect
-                x={3}
-                y={9 - BAR_H / 2}
-                width={16}
-                height={BAR_H}
-                rx={BAR_H / 2}
-                fill="var(--color-ink-soft)"
-                opacity={BAR_OPACITY}
-              />
-              <circle cx={3} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
-              <circle cx={19} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
-            </MarkKey>
-          )}
-          {present.notStated && (
-            <MarkKey label="not stated">
-              <circle
-                cx={11}
-                cy={9}
-                r={DOT_R}
-                fill="var(--color-paper)"
-                stroke="var(--color-ink-soft)"
-                strokeWidth={1.6}
-              />
-            </MarkKey>
-          )}
-        </div>
-
-        <span className="flex-1" />
-
+      <div className="flex items-center justify-end">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -117,7 +84,7 @@ export function Legend({
       */}
       <div className="mt-3 space-y-1.5 border-t border-hairline pt-3">
         <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
-          <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+          <span className={LABEL}>
             {meta.route_legend_label ?? 'Routes of administration'}
           </span>
           {Object.entries(meta.route_legend).map(([code, label]) => (
@@ -143,7 +110,7 @@ export function Legend({
 
         {phasesPresent.length > 0 && (
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            <span className={LABEL}>
               Highest phase
             </span>
             <span className="flex flex-wrap items-center gap-1.5">
@@ -165,9 +132,20 @@ export function Legend({
           </p>
         )}
 
+        {entries.some((e) => e.on_hold) && (
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+            <span className={LABEL}>Status</span>
+            <OnHoldChip meta={meta} />
+            <span>
+              shown alongside the phase chip, not instead of it: a programme can be both, e.g.
+              Phase III and on hold.
+            </span>
+          </p>
+        )}
+
         {showBandKey && (
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            <span className={LABEL}>
               Entry type
             </span>
             <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -185,10 +163,51 @@ export function Legend({
 
         {showIntervalKeys && meta.dosing_axis_note && (
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] leading-relaxed text-ink-soft">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            <span className={LABEL}>
               Dosing interval
             </span>
             <span className="max-w-4xl">{meta.dosing_axis_note}</span>
+          </p>
+        )}
+
+        {/* The marks themselves, moved here after Dosing interval rather than
+            standing alone above the legend: they explain the same axis the note
+            above just described, so the two now read as one explanation. */}
+        {(present.dot || present.range || present.notStated) && (
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-ink-soft">
+            <span className={LABEL}>Marks</span>
+            {present.dot && (
+              <MarkKey label="stated interval">
+                <circle cx={11} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+              </MarkKey>
+            )}
+            {present.range && (
+              <MarkKey label="range studied">
+                <rect
+                  x={3}
+                  y={9 - BAR_H / 2}
+                  width={16}
+                  height={BAR_H}
+                  rx={BAR_H / 2}
+                  fill="var(--color-ink-soft)"
+                  opacity={BAR_OPACITY}
+                />
+                <circle cx={3} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+                <circle cx={19} cy={9} r={DOT_R} fill="var(--color-ink-soft)" />
+              </MarkKey>
+            )}
+            {present.notStated && (
+              <MarkKey label="not stated">
+                <circle
+                  cx={11}
+                  cy={9}
+                  r={DOT_R}
+                  fill="var(--color-paper)"
+                  stroke="var(--color-ink-soft)"
+                  strokeWidth={1.6}
+                />
+              </MarkKey>
+            )}
           </p>
         )}
       </div>
@@ -196,7 +215,7 @@ export function Legend({
       {open && (
         <div className="mt-4 space-y-3">
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            <span className={LABEL}>
               Indication
             </span>
             <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -222,7 +241,7 @@ export function Legend({
 
           {stagesPresent.length > 0 && (
             <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
-              <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              <span className={LABEL}>
                 Stage
               </span>
               <span className="flex flex-wrap items-center gap-x-4 gap-y-1">

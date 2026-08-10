@@ -507,7 +507,7 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   } else if (view === 'grid') {
     drawGridBody(ctx, bodyArea, rows, meta, o.classOrder ?? [], o.cellOrder ?? {})
   } else {
-    drawChartsBody(ctx, bodyArea, rows, meta)
+    drawChartsBody(ctx, bodyArea, rows, meta, o.classOrder ?? [], o.cellOrder ?? {})
   }
 
   // Slides have a fixed height, so the footer is pinned to the bottom rather
@@ -904,13 +904,18 @@ function drawChartsBody(
   area: BodyArea,
   rows: Entry[],
   meta: Meta,
+  classOrder: string[] = [],
+  cellOrder: Record<string, string[]> = {},
 ) {
+  // Same class order the on-screen charts and the class grid share, so an
+  // export matches whatever arrangement the reader was looking at.
+  const order = { order: [], hidden: new Set<string>(), classOrder, cellOrder }
   const gap = 48
   const w = (area.w - gap) / 2
-  drawOneChart(ctx, { ...area, w }, columnsByClass(rows, meta), 'Agents by class',
+  drawOneChart(ctx, { ...area, w }, columnsByClass(rows, meta, order), 'Agents by class',
     'split by most advanced trial phase', phaseLegend(rows, meta), meta)
-  drawOneChart(ctx, { ...area, x: area.x + w + gap, w }, columnsByPhase(rows, meta),
-    'Agents by phase', 'split by drug class', classLegend(rows, meta), meta)
+  drawOneChart(ctx, { ...area, x: area.x + w + gap, w }, columnsByPhase(rows, meta, order),
+    'Agents by phase', 'split by drug class', classLegend(rows, meta, order), meta)
 }
 
 function drawOneChart(

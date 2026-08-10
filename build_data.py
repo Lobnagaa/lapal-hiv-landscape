@@ -105,6 +105,12 @@ META = {
  'phase_colours':{'Preclinical':'#F1F0F7','Phase I':'#E4E1F1','Phase I/II':'#D5D0E9',
                   'Phase II':'#C3BBDE','Phase II/III':'#AFA4D1','Phase III':'#9A8CC3',
                   'Phase IV':'#8878B8'},
+ # The on-hold / discontinued chip, shown ALONGSIDE the phase chip rather than
+ # instead of it: a programme can be Phase III and on hold at once, so this is
+ # not another step on the phase ramp and deliberately does not use ramp
+ # colours. A dashed border and no fill say "stopped" without adding a fourth
+ # colour scale to a row that already carries stage, phase and route.
+ 'on_hold_label':'On hold / discontinued',
  # Categorical palette for the stacked count charts, where class is a series
  # rather than an ordered value. Optimised for worst-case colour-vision-deficient
  # separation: min OKLab dE 11.0 across all pairs, against a target of 8.
@@ -297,6 +303,11 @@ def main():
             'frequencies':freqs,'frequencies_full':[FREQ_FULL[f] for f in freqs],
             'frequency_provenance':src,
             'stage':stage,'highest_phase':g('highest_phase') or None,
+            # A status, not a phase step: independent of highest_phase, so a row can
+            # be both e.g. Phase III and on hold. Kept outside `flags`, which is
+            # reserved for data-QUALITY issues; this is a fact about the programme,
+            # not a gap in the record.
+            'on_hold': g('on_hold_discontinued').lower()=='x',
             'developers_full':[d.strip() for d in re.split(r'[;]', g('developers')) if d.strip()],
             'drug_class':g('drug_class') or None,
             'class_group':cls or None,

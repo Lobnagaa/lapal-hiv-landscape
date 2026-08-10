@@ -1,14 +1,16 @@
 /**
  * The filter bar.
  *
- * The indication selector sits alone at the top and is styled as the primary
- * control, because it is the choice that defines the view: it decides which
- * indication the dashboard is about and drives the chrome accent. The remaining
- * facets are secondary and share one row.
+ * Two rows. Search and the facet dropdowns (Stage, Route, Interval, Developer)
+ * come first, directly under the view switcher, since narrowing what is on
+ * screen is the more frequent action. Indication and Entry type sit below:
+ * both drive scope too, but each is a two-way toggle rather than a search or a
+ * long facet list, so they read as a smaller, second decision rather than
+ * competing with the row above for attention.
  */
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Entry, Indication, Meta } from '../types'
+import type { Band, Entry, Indication, Meta } from '../types'
 import {
   type FacetKey,
   type FilterState,
@@ -24,6 +26,12 @@ const FACETS: { key: FacetKey; label: string }[] = [
   { key: 'frequencies', label: 'Interval' },
   { key: 'developers', label: 'Developer' },
 ]
+
+/**
+ * Display label for the two bands, matching the F/R and C letters the chip
+ * uses elsewhere so a reader can connect this toggle to that tag.
+ */
+const BAND_LABEL: Record<Band, string> = { formulations: 'Formulations/Regimens', compounds: 'Compounds' }
 
 export function Filters({
   entries,
@@ -50,13 +58,33 @@ export function Filters({
   }
 
   return (
-    <div className="py-6">
+    <div className="space-y-3 py-6">
+      {/* search and the facet dropdowns: narrowing the current selection */}
+      <div className="flex flex-wrap items-center gap-2">
+        <SearchBox
+          value={state.search}
+          onChange={(search) => setState((s) => ({ ...s, search }))}
+        />
+
+        {FACETS.map(({ key, label }) => (
+          <FacetSelect
+            key={key}
+            label={label}
+            options={facetOptions(entries, state, meta, key)}
+            showSwatch={key === 'stages'}
+            onToggle={(v) => setState((s) => ({ ...s, [key]: toggleIn(s[key], v) }))}
+            onClear={() => setState((s) => ({ ...s, [key]: new Set<string>() }))}
+          />
+        ))}
+      </div>
+
       {/*
-        Indication used to be a standalone hero section, sized and weighted well
-        above everything else in the filter bar. It decides the chrome accent
-        and what is in scope, but functionally it is one more toggle, so it now
-        sits at the same size as the rest of this row rather than announcing
-        itself as a different kind of control.
+        Indication and Entry type: two-way toggles rather than a search or a
+        long list, so they sit apart from the row above as a smaller decision.
+        Indication used to stand alone as a hero section, sized well above
+        everything else; it decides the chrome accent and what is in scope, but
+        functionally it is one more toggle, so it is now sized like Entry type
+        beside it rather than announcing itself as a different kind of control.
       */}
       <div className="flex flex-wrap items-center gap-2">
         <span
@@ -85,31 +113,19 @@ export function Filters({
 
         <span className="mx-1 hidden h-5 w-px bg-hairline sm:block" />
 
-        <SearchBox
-          value={state.search}
-          onChange={(search) => setState((s) => ({ ...s, search }))}
-        />
-
-        {FACETS.map(({ key, label }) => (
-          <FacetSelect
-            key={key}
-            label={label}
-            options={facetOptions(entries, state, meta, key)}
-            showSwatch={key === 'stages'}
-            onToggle={(v) => setState((s) => ({ ...s, [key]: toggleIn(s[key], v) }))}
-            onClear={() => setState((s) => ({ ...s, [key]: new Set<string>() }))}
-          />
-        ))}
-
-        <span className="mx-1 hidden h-5 w-px bg-hairline sm:block" />
-
-        {Object.keys(meta.record_bands).map((band) => (
+        <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+          Entry type
+        </span>
+        {(Object.keys(meta.record_bands) as Band[]).map((band) => (
           <Toggle
             key={band}
             on={state.bands.has(band)}
+            // Same wash the C / F/R chip uses elsewhere, so the colour means
+            // the same thing here as it does on every row it filters.
+            accent={meta.band_colours?.[band] ?? 'var(--color-accent)'}
             onClick={() => setState((s) => ({ ...s, bands: toggleIn(s.bands, band) }))}
           >
-            {band}
+            {BAND_LABEL[band] ?? band}
           </Toggle>
         ))}
 

@@ -261,6 +261,27 @@ export function sortByInterval(entries: Entry[], meta: Meta): string[] {
 }
 
 /**
+ * Order every entry alphabetically by its first listed developer, clicked from
+ * the "Developer" column header. ASSUMPTION: for a row with more than one
+ * developer, the FIRST one (the order they were curated in) decides its
+ * position, since that is also the one always shown unabbreviated on the row
+ * itself. An entry with no developer recorded sorts last.
+ */
+export function sortByDeveloper(entries: Entry[]): string[] {
+  return [...entries]
+    .sort((a, b) => {
+      const da = a.developers_full[0] ?? ''
+      const db = b.developers_full[0] ?? ''
+      if (!da && db) return 1
+      if (da && !db) return -1
+      const c = da.localeCompare(db, 'en-GB')
+      if (c !== 0) return c
+      return a.name_full.localeCompare(b.name_full, 'en-GB')
+    })
+    .map((e) => e.id)
+}
+
+/**
  * Order the entries as one flat list, for meta.default_order_mode === 'manual'.
  *
  * Band and stage grouping is switched off entirely and the curator's `order`

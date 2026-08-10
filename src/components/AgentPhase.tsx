@@ -27,13 +27,14 @@ function safeUrl(url: string | null): string | null {
   }
 }
 
-type SortKey = 'name' | 'phase' | 'class' | 'stage'
+type SortKey = 'name' | 'phase' | 'class' | 'stage' | 'band'
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: 'name', label: 'A to Z' },
   { key: 'phase', label: 'Most advanced' },
   { key: 'class', label: 'Class' },
   { key: 'stage', label: 'Stage' },
+  { key: 'band', label: 'Entry type' },
 ]
 
 export function AgentPhase({
@@ -85,6 +86,10 @@ export function AgentPhase({
     const byName = (a: Entry, b: Entry) => a.name_full.localeCompare(b.name_full, 'en-GB')
     const phaseRank = (e: Entry) => (e.highest_phase ? phases.indexOf(e.highest_phase) : -1)
     const stageRank = (e: Entry) => Object.keys(meta.stage_tiers).indexOf(e.stage)
+    // Same order record_bands is defined in, so this agrees with the Entry
+    // type filter buttons and the F/R chip's own precedence.
+    const bandOrder = Object.keys(meta.record_bands)
+    const bandRank = (e: Entry) => bandOrder.indexOf(e.band)
     const sorted = [...entries]
     switch (sort) {
       case 'phase':
@@ -96,6 +101,8 @@ export function AgentPhase({
         )
       case 'stage':
         return sorted.sort((a, b) => stageRank(a) - stageRank(b) || byName(a, b))
+      case 'band':
+        return sorted.sort((a, b) => bandRank(a) - bandRank(b) || byName(a, b))
       default:
         return sorted.sort(byName)
     }

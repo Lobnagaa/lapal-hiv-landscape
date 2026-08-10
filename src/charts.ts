@@ -8,6 +8,7 @@
  */
 import type { Entry, Meta } from './types'
 import { phaseLabel } from './types'
+import { arrangeClasses, type ViewState } from './viewState'
 
 export interface Segment {
   key: string
@@ -34,17 +35,29 @@ export function foldClass(meta: Meta, cls: string | null): string {
   return (meta.class_singles ?? []).includes(cls) ? cls : 'Combination'
 }
 
-/** The class series present, in fixed vocabulary order so colours never move. */
-export function classSeries(entries: Entry[], meta: Meta): string[] {
-  return [...(meta.class_singles ?? []), 'Combination', 'Not stated'].filter((c) =>
+/**
+ * The class series present, in fixed vocabulary order so colours never move,
+ * unless the reader has reordered classes, in which case that order wins.
+ *
+ * `order` is the SAME classOrder the class-and-phase grid's rows use: reader
+ * shared the same order across the class grid, the class chart's columns and
+ * the phase chart's stacking, so dragging a class in one place is one
+ * decision, not three. A class with zero entries in view is never listed,
+ * same rule as before; "hiding" a class means hiding all its entries, via the
+ * ordinary per-row hide, which removes it from every one of these places at
+ * once rather than needing a separate hidden-classes concept.
+ */
+export function classSeries(entries: Entry[], meta: Meta, order?: ViewState): string[] {
+  const present = [...(meta.class_singles ?? []), 'Combination', 'Not stated'].filter((c) =>
     entries.some((e) => foldClass(meta, e.class_group) === c),
   )
+  return order ? arrangeClasses(present, order) : present
 }
 
 /** One column per class, stacked by phase. */
-export function columnsByClass(entries: Entry[], meta: Meta): Column[] {
+export function columnsByClass(entries: Entry[], meta: Meta, order?: ViewState): Column[] {
   const phases = meta.phase_order ?? []
-  return classSeries(entries, meta).map((cls) => {
+  return classSeries(entries, meta, order).map((cls) => {
     const items = entries.filter((e) => foldClass(meta, e.class_group) === cls)
     const segments: Segment[] = []
     for (const ph of phases) {
@@ -59,9 +72,9 @@ export function columnsByClass(entries: Entry[], meta: Meta): Column[] {
 }
 
 /** One column per phase, stacked by class. */
-export function columnsByPhase(entries: Entry[], meta: Meta): Column[] {
+export function columnsByPhase(entries: Entry[], meta: Meta, order?: ViewState): Column[] {
   const phases = meta.phase_order ?? []
-  const series = classSeries(entries, meta)
+  const series = classSeries(entries, meta, order)
   const cols = [
     ...phases.filter((p) => entries.some((e) => e.highest_phase === p)),
     ...(entries.some((e) => !e.highest_phase) ? ['__none__'] : []),
@@ -98,8 +111,8 @@ export function phaseLegend(entries: Entry[], meta: Meta) {
   ]
 }
 
-export function classLegend(entries: Entry[], meta: Meta) {
-  return classSeries(entries, meta).map((c) => ({
+export function classLegend(entries: Entry[], meta: Meta, order?: ViewState) {
+  return classSeries(entries, meta, order).map((c) => ({
     key: c,
     colour: meta.class_colours?.[c] ?? '#9AA3AE',
   }))

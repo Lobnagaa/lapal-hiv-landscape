@@ -92,6 +92,9 @@ export function Tooltip({
         {entry.highest_phase && (
           <Field label="Highest phase" value={phaseLabel(meta, entry.highest_phase)} />
         )}
+        {entry.on_hold && (
+          <Field label="Status" value={meta.on_hold_label ?? 'On hold / discontinued'} />
+        )}
         <Field
           label="Route"
           value={

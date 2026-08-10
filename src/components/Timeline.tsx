@@ -26,6 +26,7 @@ import { stageVar } from '../theme'
 import { useMediaQuery } from '../useMediaQuery'
 import { Tooltip, type TooltipTarget } from './Tooltip'
 import { BandTag } from './BandTag'
+import { OnHoldChip } from './OnHoldChip'
 
 /**
  * Only ever open a plain web address.
@@ -103,6 +104,8 @@ export interface TimelineControls {
   onMove: (id: string, toIndex: number) => void
   onNudge: (id: string, delta: -1 | 1) => void
   onHide: (id: string) => void
+  /** Clicking the Developer column header sorts by it, same idea as a table header click. */
+  onSortByDeveloper?: () => void
 }
 
 export function Timeline({
@@ -205,7 +208,7 @@ export function Timeline({
 
   return (
     <div className="relative">
-      <AxisHeader meta={meta} geo={geo} grid={grid} plotRef={plotRef} wide={wide} />
+      <AxisHeader meta={meta} geo={geo} grid={grid} plotRef={plotRef} wide={wide} controls={controls} />
 
       {controls.custom ? (
         <div>{entries.map((entry) => <EntryRow {...rowProps(entry, ++flat)} />)}</div>
@@ -261,12 +264,14 @@ function AxisHeader({
   grid,
   plotRef,
   wide,
+  controls,
 }: {
   meta: Meta
   geo: ReturnType<typeof axisGeometry>
   grid: string
   plotRef: RefObject<HTMLDivElement | null>
   wide: boolean
+  controls: TimelineControls
 }) {
   return (
     <div
@@ -315,11 +320,24 @@ function AxisHeader({
           approved or investigated
         </span>
       </div>
-      {wide && (
-        <div className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
-          Developer
-        </div>
-      )}
+      {wide &&
+        (controls.onSortByDeveloper ? (
+          <button
+            type="button"
+            title="Sort every entry alphabetically by developer"
+            onClick={controls.onSortByDeveloper}
+            className="flex items-center gap-1 text-left text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase hover:text-ink"
+          >
+            Developer
+            <svg width="9" height="9" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.6">
+              <path d="M7 10l5-6 5 6M7 14l5 6 5-6" />
+            </svg>
+          </button>
+        ) : (
+          <div className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+            Developer
+          </div>
+        ))}
     </div>
   )
 }
@@ -514,6 +532,7 @@ function EntryRow({
         </span>
         <IndicationBadge badge={badge} />
         <PhaseChip meta={meta} phase={entry.highest_phase} />
+        {entry.on_hold && <OnHoldChip meta={meta} />}
         {href && (
           <button
             type="button"

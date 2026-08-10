@@ -23,23 +23,40 @@
  * segment is hoverable. Counts are labelled only on the column total, not on
  * every segment, which would be noise.
  */
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Entry, Meta } from '../types'
 import {
   type Column,
   classLegend,
+  classSeries,
   columnsByClass,
   columnsByPhase,
+  foldClass,
   phaseLegend,
   axisScale,
 } from '../charts'
+import type { ViewState } from '../viewState'
 
 const H = 260
 const PAD = { top: 16, right: 12, bottom: 56, left: 34 }
 /** Gap between stacked segments, so they read as separate blocks. */
 const SEG_GAP = 2
 
-export function PhaseCharts({ entries, meta }: { entries: Entry[]; meta: Meta }) {
+export function PhaseCharts({
+  entries,
+  meta,
+  order,
+  onReorderClasses,
+  onHideClass,
+}: {
+  entries: Entry[]
+  meta: Meta
+  /** The reader's class order, shared with the class-and-phase grid's rows. */
+  order: ViewState
+  onReorderClasses: (classes: string[]) => void
+  /** Hides every entry in a class, which is what removing its column means. */
+  onHideClass: (ids: string[]) => void
+}) {
   if (entries.length === 0) {
     return (
       <div className="border-t border-hairline py-20 text-center">
@@ -51,19 +68,124 @@ export function PhaseCharts({ entries, meta }: { entries: Entry[]; meta: Meta })
   }
 
   return (
-    <div className="grid gap-10 pt-2 lg:grid-cols-2">
-      <StackedBars
-        title="Agents by class"
-        subtitle="Each bar split by most advanced trial phase. Darker is further along."
-        columns={columnsByClass(entries, meta)}
-        legend={phaseLegend(entries, meta)}
-      />
-      <StackedBars
-        title="Agents by phase"
-        subtitle="Each bar split by drug class. Combination products are grouped."
-        columns={columnsByPhase(entries, meta)}
-        legend={classLegend(entries, meta)}
-      />
+    <div className="pt-2">
+      <ClassControls entries={entries} meta={meta} order={order} onReorder={onReorderClasses} onHide={onHideClass} />
+      <div className="grid gap-10 lg:grid-cols-2">
+        <StackedBars
+          title="Agents by class"
+          subtitle="Each bar split by most advanced trial phase. Darker is further along."
+          columns={columnsByClass(entries, meta, order)}
+          legend={phaseLegend(entries, meta)}
+        />
+        <StackedBars
+          title="Agents by phase"
+          subtitle="Each bar split by drug class. Combination products are grouped."
+          columns={columnsByPhase(entries, meta, order)}
+          legend={classLegend(entries, meta, order)}
+        />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Hide or reorder the classes both charts share.
+ *
+ * One control for both charts rather than one per chart, because it is the
+ * same class order and the same hidden entries either way: dragging a class
+ * here changes the "Agents by class" columns directly and the "Agents by
+ * phase" stacking order and legend to match, so the two charts never disagree
+ * about which class comes first. Hiding a class hides every entry in it,
+ * which is the same action the class-and-phase grid's row eye icon performs,
+ * reached from wherever is convenient.
+ */
+function ClassControls({
+  entries,
+  meta,
+  order,
+  onReorder,
+  onHide,
+}: {
+  entries: Entry[]
+  meta: Meta
+  order: ViewState
+  onReorder: (classes: string[]) => void
+  onHide: (ids: string[]) => void
+}) {
+  const classes = classSeries(entries, meta, order)
+  const dragged = useRef<string | null>(null)
+  const [overClass, setOverClass] = useState<string | null>(null)
+
+  const drop = (target: string) => {
+    const from = dragged.current
+    dragged.current = null
+    setOverClass(null)
+    if (!from || from === target) return
+    const next = classes.filter((c) => c !== from)
+    next.splice(
+      classes.indexOf(target) > classes.indexOf(from) ? next.indexOf(target) + 1 : next.indexOf(target),
+      0,
+      from,
+    )
+    onReorder(next)
+  }
+
+  return (
+    <div className="mb-4 flex flex-wrap items-center gap-1.5">
+      <span className="mr-1 text-[10px] font-bold tracking-[0.14em] text-ink-soft uppercase">
+        Classes
+      </span>
+      {classes.map((cls) => {
+        const swatch = cls === 'Not stated' ? undefined : meta.class_colours?.[cls]
+        const ids = entries.filter((e) => foldClass(meta, e.class_group) === cls).map((e) => e.id)
+        return (
+          <span
+            key={cls}
+            draggable
+            onDragStart={() => {
+              dragged.current = cls
+            }}
+            onDragEnd={() => {
+              dragged.current = null
+              setOverClass(null)
+            }}
+            onDragOver={(ev) => {
+              if (!dragged.current) return
+              ev.preventDefault()
+              setOverClass(cls)
+            }}
+            onDrop={(ev) => {
+              ev.preventDefault()
+              drop(cls)
+            }}
+            title={`Drag to reorder ${cls}. Hide removes it from both charts.`}
+            className="group/cls flex cursor-grab items-center gap-1 rounded-full border bg-white py-0.5 pr-1 pl-2 text-[11px] active:cursor-grabbing"
+            style={{
+              borderColor: overClass === cls ? 'var(--color-accent)' : 'var(--color-hairline)',
+            }}
+          >
+            {swatch && (
+              <span aria-hidden className="inline-block size-2 shrink-0 rounded-sm" style={{ background: swatch }} />
+            )}
+            <span className="text-ink">{cls}</span>
+            <button
+              type="button"
+              title={`Hide ${cls} from the charts`}
+              aria-label={`Hide ${cls} from the charts`}
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onHide(ids)
+              }}
+              className="rounded p-0.5 text-ink-soft opacity-0 transition-opacity group-hover/cls:opacity-70 hover:!opacity-100"
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8" />
+                <path d="M9.4 5.2A9.5 9.5 0 0112 5c5 0 9 4.5 9 7a12 12 0 01-2.4 3.3M6.2 6.7C3.9 8.2 3 10.4 3 12c0 2.5 4 7 9 7a9.6 9.6 0 003.6-.7" />
+              </svg>
+            </button>
+          </span>
+        )
+      })}
     </div>
   )
 }

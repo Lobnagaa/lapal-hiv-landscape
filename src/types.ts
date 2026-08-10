@@ -87,6 +87,12 @@ export interface Entry {
   stage: StageName
   /** Highest clinical phase on record, or null. Tooltip only. */
   highest_phase: string | null
+  /**
+   * On hold or discontinued, independent of highest_phase: a programme can be
+   * both e.g. Phase III and on hold. Shown as its own chip alongside the phase
+   * chip, never in place of it.
+   */
+  on_hold: boolean
 
   /** One or more developers. Feeds the developer filter and the row-end label. */
   developers_full: string[]
@@ -227,6 +233,8 @@ export interface Meta {
   route_colours?: Record<string, string>
   /** Wash colour for the compound / formulation tag, keyed by band. */
   band_colours?: Record<string, string>
+  /** Label for the on-hold / discontinued chip, e.g. "On hold / discontinued". */
+  on_hold_label?: string
   /** Clinical phases in order, least to most advanced. */
   phase_order?: string[]
   /**
