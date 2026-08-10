@@ -146,6 +146,19 @@ META = {
  #
  # Change this one value to switch. Nothing else needs editing.
  'default_order_mode':'grouped',
+ # Which of the four views the page opens on, before the reader has clicked
+ # anything. One of 'timeline', 'agents', 'grid', 'charts'.
+ 'default_view':'timeline',
+ # The dosing timeline's own starting arrangement, independent of which view
+ # opens first. Only takes effect when default_view is 'timeline', but is kept
+ # as its own setting rather than folded into default_view: a curator choosing
+ # to open on the timeline still has two different stories to tell with it.
+ #
+ #   'grouped'   the band/stage grouping above, via default_order_mode.
+ #   'interval'  flattened and sorted by each entry's longest recorded dosing
+ #               interval, longest first, the same arrangement the reader
+ #               reaches by clicking "Order by dosing interval".
+ 'default_timeline_order':'grouped',
  'typeface':'Manrope',
  'encoding_notes':[
     'Dosing axis is ordinal, not to scale.',
@@ -167,6 +180,12 @@ def fail(msgs):
 
 def cell(v):
     return '' if v is None else str(v).strip()
+
+assert META['default_view'] in ('timeline','agents','grid','charts'), \
+    f"default_view must be one of timeline/agents/grid/charts, got {META['default_view']!r}"
+assert META['default_timeline_order'] in ('grouped','interval'), \
+    f"default_timeline_order must be 'grouped' or 'interval', got {META['default_timeline_order']!r}"
+
 
 def main():
     wb = openpyxl.load_workbook(IN, data_only=True)

@@ -241,19 +241,23 @@ function compareWithinStage(a: Entry, b: Entry, meta: Meta): number {
  * already visible on the entry's own row regardless of where the row sits.
  * Not-stated entries sort last, as they do everywhere else in this file.
  *
- * Returns ids, ready for setOrder, exactly like the agents table's own sort.
+ * Used both to build the default view (meta.default_timeline_order ===
+ * 'interval') and by the reader's own "Order by dosing interval" control.
  */
+export function sortEntriesByInterval(entries: Entry[], meta: Meta): Entry[] {
+  return [...entries].sort((a, b) => {
+    const ma = rowMarks(a, meta)
+    const mb = rowMarks(b, meta)
+    const ka = ma.notStated ? -1 : (ma.dotIndices[ma.dotIndices.length - 1] ?? -1)
+    const kb = mb.notStated ? -1 : (mb.dotIndices[mb.dotIndices.length - 1] ?? -1)
+    if (ka !== kb) return kb - ka
+    return a.name_full.localeCompare(b.name_full, 'en-GB')
+  })
+}
+
+/** As above, but ids, ready for setOrder, exactly like the agents table's own sort. */
 export function sortByInterval(entries: Entry[], meta: Meta): string[] {
-  return [...entries]
-    .sort((a, b) => {
-      const ma = rowMarks(a, meta)
-      const mb = rowMarks(b, meta)
-      const ka = ma.notStated ? -1 : (ma.dotIndices[ma.dotIndices.length - 1] ?? -1)
-      const kb = mb.notStated ? -1 : (mb.dotIndices[mb.dotIndices.length - 1] ?? -1)
-      if (ka !== kb) return kb - ka
-      return a.name_full.localeCompare(b.name_full, 'en-GB')
-    })
-    .map((e) => e.id)
+  return sortEntriesByInterval(entries, meta).map((e) => e.id)
 }
 
 /**

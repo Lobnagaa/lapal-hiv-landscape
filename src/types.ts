@@ -259,6 +259,15 @@ export interface Meta {
    * Set in build_data.py.
    */
   default_order_mode?: 'grouped' | 'manual'
+  /** Which of the four views the page opens on. Set in build_data.py. */
+  default_view?: 'timeline' | 'agents' | 'grid' | 'charts'
+  /**
+   * The dosing timeline's own starting arrangement, independent of
+   * default_view: a curator opening on the timeline still has two different
+   * stories to tell with it. 'interval' is the same arrangement the reader
+   * reaches via "Order by dosing interval". Set in build_data.py.
+   */
+  default_timeline_order?: 'grouped' | 'interval'
   /** Stage name -> colour and definition. Also defines the stage sort order. */
   stage_tiers: Record<string, StageTier>
   palette: Palette

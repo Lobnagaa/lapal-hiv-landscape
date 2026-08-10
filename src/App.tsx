@@ -15,7 +15,7 @@
  * page can do before asking anything of them. Filters, the summary and the key
  * then sit immediately above whichever view they picked.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDataset } from './data/useDataset'
 import { ErrorScreen, LoadingScreen } from './components/DataState'
 import { Footer, Header } from './components/Header'
@@ -29,7 +29,7 @@ import { AgentPhase } from './components/AgentPhase'
 import { PhaseCharts } from './components/PhaseCharts'
 import { Tooltip, type TooltipTarget } from './components/Tooltip'
 import { accentFor, applyAccent } from './theme'
-import { groupEntries, sortByAdminOrder, sortByInterval } from './encoding'
+import { groupEntries, sortByAdminOrder, sortByInterval, sortEntriesByInterval } from './encoding'
 import { type FilterState, applyFilters, defaultFilters, summarise } from './filters'
 import {
   type ViewState,
@@ -51,7 +51,8 @@ export default function App() {
   const state = useDataset()
   const [filters, setFilters] = useState<FilterState | null>(null)
   const [view, setView] = useState<ViewState>(defaultView)
-  /** Which visualisation is on screen. */
+  /** Which visualisation is on screen. Falls back to the timeline until the
+   * data file's own choice (meta.default_view) is known. */
   const [mode, setMode] = useState<'timeline' | 'agents' | 'grid' | 'charts'>('timeline')
   /** The grid's hover card. The timeline manages its own. */
   const [gridTip, setGridTip] = useState<TooltipTarget | null>(null)
@@ -65,6 +66,18 @@ export default function App() {
   useEffect(() => {
     if (meta && filters) applyAccent(meta, filters.indications)
   }, [meta, filters])
+
+  // Apply the curator's starting view exactly once, the moment the data file
+  // is known. A ref rather than a second render of state: re-applying this on
+  // every meta change would silently snap a reader back to it after they had
+  // already clicked to a different view.
+  const appliedDefaultView = useRef(false)
+  useEffect(() => {
+    if (meta && !appliedDefaultView.current) {
+      appliedDefaultView.current = true
+      if (meta.default_view) setMode(meta.default_view)
+    }
+  }, [meta])
 
   const entries = state.status === 'ready' ? state.data.entries : []
 
@@ -82,9 +95,17 @@ export default function App() {
    * drag starts from the arrangement the reader can see.
    */
   const adminManual = meta?.default_order_mode === 'manual'
+  // The curator's other starting arrangement: the timeline flattened and
+  // sorted by dosing interval instead of grouped by stage. Kept as its own
+  // flag, alongside adminManual, for the same reason: Timeline needs to know
+  // to render flat rather than re-grouping what is already in the order it
+  // wants, which would put the stage headers straight back.
+  const defaultInterval = meta?.default_timeline_order === 'interval'
   const visible = useMemo(() => {
     const shown = arrange(filtered, view)
     if (isCustomOrder(view) || !meta) return shown
+    // The curator's dosing-interval default, when they have set one.
+    if (meta.default_timeline_order === 'interval') return sortEntriesByInterval(shown, meta)
     // The admin's flat order, when they have set one.
     if (meta.default_order_mode === 'manual') return sortByAdminOrder(shown)
     return groupEntries(shown, meta).flatMap((b) => b.groups.flatMap((g) => g.entries))
@@ -214,9 +235,11 @@ export default function App() {
           entries={visible}
           meta={meta}
           controls={{
-            // Flat rendering covers two cases: the reader has taken over the
-            // order, or the admin has set an explicit one in the workbook.
-            custom: isCustomOrder(view) || adminManual,
+            // Flat rendering covers three cases: the reader has taken over the
+            // order, the admin has set an explicit one in the workbook, or the
+            // curator's default is the dosing-interval sort rather than
+            // grouped-by-stage. All three need the stage headers switched off.
+            custom: isCustomOrder(view) || adminManual || defaultInterval,
             readerCustom: isCustomOrder(view),
             onMove: (id, toIndex) => setView((v) => moveEntry(visible, v, id, toIndex)),
             onNudge: (id, delta) => setView((v) => nudge(visible, v, id, delta)),

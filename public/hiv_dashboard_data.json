@@ -162,6 +162,8 @@
   "brand_logo": "logos/lapal.png",
   "brand_url": "lapal.ch",
   "default_order_mode": "grouped",
+  "default_view": "timeline",
+  "default_timeline_order": "grouped",
   "typeface": "Manrope",
   "encoding_notes": [
    "Dosing axis is ordinal, not to scale.",
