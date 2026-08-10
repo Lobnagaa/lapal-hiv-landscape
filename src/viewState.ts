@@ -28,10 +28,18 @@ export interface ViewState {
   order: string[]
   /** Entry ids the reader has hidden. */
   hidden: Set<string>
+  /**
+   * Class names in the reader's chosen row order, for the class grid.
+   *
+   * Separate from `order` because the grid arranges CLASSES, not entries: a
+   * chip's position inside the grid is decided by its class and phase, so there
+   * is nothing an entry-level order could move. Empty until they drag a row.
+   */
+  classOrder: string[]
 }
 
 export function defaultView(): ViewState {
-  return { order: [], hidden: new Set() }
+  return { order: [], hidden: new Set(), classOrder: [] }
 }
 
 /** True once the reader has taken control of the ordering. */
@@ -40,7 +48,29 @@ export function isCustomOrder(v: ViewState): boolean {
 }
 
 export function isArranged(v: ViewState): boolean {
-  return isCustomOrder(v) || v.hidden.size > 0
+  return isCustomOrder(v) || v.hidden.size > 0 || v.classOrder.length > 0
+}
+
+/** Put the class grid's rows in the order given, which is the order it drew. */
+export function setClassOrder(v: ViewState, classes: string[]): ViewState {
+  return { ...v, classOrder: classes }
+}
+
+/** Apply that order to the classes actually present, unknown ones last. */
+export function arrangeClasses(classes: string[], v: ViewState): string[] {
+  if (v.classOrder.length === 0) return classes
+  const rank = new Map(v.classOrder.map((c, i) => [c, i]))
+  const known = classes.filter((c) => rank.has(c))
+  const rest = classes.filter((c) => !rank.has(c))
+  known.sort((a, b) => (rank.get(a) ?? 0) - (rank.get(b) ?? 0))
+  return [...known, ...rest]
+}
+
+/** Hide several entries at once, which is what hiding a whole class row means. */
+export function hideMany(v: ViewState, ids: string[]): ViewState {
+  const hidden = new Set(v.hidden)
+  for (const id of ids) hidden.add(id)
+  return { ...v, hidden }
 }
 
 /**
@@ -130,5 +160,5 @@ export function showAll(v: ViewState): ViewState {
 }
 
 export function resetOrder(v: ViewState): ViewState {
-  return { ...v, order: [] }
+  return { ...v, order: [], classOrder: [] }
 }

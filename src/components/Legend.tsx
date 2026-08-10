@@ -9,6 +9,13 @@
  *
  * Stage colours and definitions come from meta.stage_tiers; the notes come from
  * meta.encoding_notes, so the data file can speak for itself.
+ *
+ * Stage and indication sit behind "How to read this" rather than in the always
+ * visible row. Both are already legible without the key, since stage names are
+ * spelled out in the hover card and the indication is tagged Tx, Prev or Both
+ * on every row, and keeping them out of the standing header is what stops the
+ * page opening with more explanation than picture. The route and interval codes
+ * stay visible, because those genuinely cannot be guessed.
  */
 import { useState } from 'react'
 import type { ReactNode } from 'react'
@@ -56,26 +63,6 @@ export function Legend({
   return (
     <div className="border-b border-hairline py-4">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        {stagesPresent.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
-              Stage
-            </span>
-            {stagesPresent.map((stage) => (
-              <span key={stage} className="flex items-center gap-1.5" title={meta.stage_tiers[stage]?.definition}>
-                <span
-                  aria-hidden
-                  className="inline-block size-2.5 rounded-full"
-                  style={{ background: stageVar(stage) }}
-                />
-                <span className="text-[12px] text-ink">{stage}</span>
-              </span>
-            ))}
-          </div>
-        )}
-
-        <span className="hidden h-4 w-px bg-hairline sm:block" />
-
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {present.dot && (
             <MarkKey label="stated interval">
@@ -207,7 +194,54 @@ export function Legend({
       </div>
 
       {open && (
-        <ul className="mt-4 max-w-3xl space-y-1.5 border-l-2 border-hairline pl-4">
+        <div className="mt-4 space-y-3">
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Indication
+            </span>
+            <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="flex items-center gap-1.5">
+                <span
+                  aria-hidden
+                  className="inline-block size-2.5 rounded-full"
+                  style={{ background: 'var(--color-treatment)' }}
+                />
+                <span className="text-ink">Treatment, tagged Tx</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span
+                  aria-hidden
+                  className="inline-block size-2.5 rounded-full"
+                  style={{ background: 'var(--color-prevention)' }}
+                />
+                <span className="text-ink">Prevention, tagged Prev</span>
+              </span>
+              <span className="text-ink">Entries for both are tagged Both and appear once.</span>
+            </span>
+          </p>
+
+          {stagesPresent.length > 0 && (
+            <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[12px] text-ink-soft">
+              <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+                Stage
+              </span>
+              <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                {stagesPresent.map((stage) => (
+                  <span key={stage} className="flex items-center gap-1.5">
+                    <span
+                      aria-hidden
+                      className="inline-block size-2.5 rounded-full"
+                      style={{ background: stageVar(stage) }}
+                    />
+                    <span className="text-ink">{stage}</span>
+                    <span>{meta.stage_tiers[stage]?.definition}</span>
+                  </span>
+                ))}
+              </span>
+            </p>
+          )}
+
+        <ul className="max-w-3xl space-y-1.5 border-l-2 border-hairline pl-4">
           {meta.encoding_notes.map((note, i) => (
             <li key={i} className="text-[13px] leading-relaxed text-ink-soft">
               {note}
@@ -224,6 +258,7 @@ export function Legend({
             filter.
           </li>
         </ul>
+        </div>
       )}
     </div>
   )

@@ -45,6 +45,9 @@ export function ViewBar({
 }) {
   const [listOpen, setListOpen] = useState(false)
   const custom = isCustomOrder(view)
+  // The grid rearranges classes rather than entries, so the reset control has to
+  // watch both or a moved class row cannot be put back.
+  const reordered = custom || view.classOrder.length > 0
   const hidden = view.hidden.size
   const hiddenEntries = allEntries.filter((e) => view.hidden.has(e.id))
 
@@ -58,8 +61,8 @@ export function ViewBar({
           </>
         ) : mode === 'grid' ? (
           <>
-            Use the eye icon on a chip to hide it. Clicking a chip opens its LAPaL entry. Chips
-            sit where their class and phase put them, so there is nothing to reorder here.
+            Drag a class by the grip at its left to move the row, or use the eye icon to hide the
+            whole class. Chips have their own eye icon, and clicking one opens its LAPaL entry.
           </>
         ) : (
           <>
@@ -75,7 +78,7 @@ export function ViewBar({
         )}
       </p>
 
-      {custom && (
+      {reordered && (
         <button
           type="button"
           onClick={onResetOrder}
@@ -113,7 +116,8 @@ export function ViewBar({
           view: mode === 'charts' ? 'charts' : mode,
           indicationLabel,
           accent,
-          arranged: custom,
+          arranged: reordered,
+          classOrder: view.classOrder,
           hiddenCount: hidden,
         }}
       />

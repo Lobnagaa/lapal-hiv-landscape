@@ -71,13 +71,15 @@
    "Phase IV": "#8878B8"
   },
   "class_colours": {
-   "Capsid inhibitor": "#922940",
-   "INSTI": "#436CC8",
-   "NNRTI": "#9A6700",
-   "NRTI": "#009ED2",
-   "NRTTI": "#008B88",
-   "mAb": "#30A86A",
-   "Combination": "#793480"
+   "INSTI": "#3153A0",
+   "mAb": "#0093AE",
+   "Capsid inhibitor": "#7F387A",
+   "NNRTI": "#8C4000",
+   "NRTI": "#896600",
+   "NRTTI": "#0A684E",
+   "PI": "#688F31",
+   "Fusion inhibitor": "#71609A",
+   "Combination": "#AD697B"
   },
   "class_singles": [
    "Capsid inhibitor",

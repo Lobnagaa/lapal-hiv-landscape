@@ -22,7 +22,8 @@ import { BAR_H, BAR_OPACITY, DOT_R, axisGeometry, rowMarks } from '../encoding'
 import { loadImage } from '../assets'
 import { buildPdf } from './pdf'
 import { buildZip } from './zip'
-import { axisScale, classLegend, columnsByClass, columnsByPhase, phaseLegend } from '../charts'
+import { axisScale, classLegend, columnsByClass, columnsByPhase, foldClass, phaseLegend } from '../charts'
+import { arrangeClasses } from '../viewState'
 
 /* --------------------------------------------------------------- editable */
 
@@ -120,6 +121,11 @@ export interface ExportOptions {
   accent: string
   arranged: boolean
   hiddenCount: number
+  /**
+   * The class grid's row order, when the reader has moved rows. The export has
+   * to match the screen, and class order is not recoverable from `entries`.
+   */
+  classOrder?: string[]
 }
 
 interface Assets {
@@ -497,7 +503,7 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   } else if (view === 'agents') {
     drawAgentsBody(ctx, bodyArea, rows, meta)
   } else if (view === 'grid') {
-    drawGridBody(ctx, bodyArea, rows, meta)
+    drawGridBody(ctx, bodyArea, rows, meta, o.classOrder ?? [])
   } else {
     drawChartsBody(ctx, bodyArea, rows, meta)
   }
@@ -787,6 +793,7 @@ function drawGridBody(
   area: BodyArea,
   rows: Entry[],
   meta: Meta,
+  classOrder: string[] = [],
 ) {
   const p = meta.palette
   const phases = meta.phase_order ?? []
@@ -794,7 +801,10 @@ function drawGridBody(
   const cols = [...present, ...(rows.some((e) => !e.highest_phase) ? ['__none__'] : [])]
   const classes = (meta.class_order ?? []).filter((c) => rows.some((e) => e.class_group === c))
   const unclassified = rows.some((e) => !e.class_group)
-  const rowKeys = [...classes, ...(unclassified ? ['__none__'] : [])]
+  const rowKeys = arrangeClasses(
+    [...classes, ...(unclassified ? ['__none__'] : [])],
+    { order: [], hidden: new Set(), classOrder },
+  )
 
   const labelW = Math.round(area.w * 0.16)
   const colW = (area.w - labelW) / Math.max(1, cols.length)
@@ -860,12 +870,22 @@ function drawGridBody(
     ctx.lineTo(area.x + area.w, top + rowH + 0.5)
     ctx.stroke()
 
+    // The class swatch, matching the counts view and the on-screen grid.
+    const swatch = cls === '__none__' ? null : meta.class_colours?.[foldClass(meta, cls)]
+    let lx = area.x
+    if (swatch) {
+      ctx.fillStyle = swatch
+      ctx.beginPath()
+      ctx.roundRect(area.x, top + 6, 9, 9, 2)
+      ctx.fill()
+      lx += 13
+    }
     ctx.font = `600 11px ${FONT}`
     ctx.fillStyle = p.ink
-    const lines = wrap(ctx, cls === '__none__' ? 'Class not stated' : cls, labelW - 10, 2)
+    const lines = wrap(ctx, cls === '__none__' ? 'Class not stated' : cls, labelW - 10 - (lx - area.x), 2)
     let ly = top + 14
     for (const line of lines) {
-      ctx.fillText(line, area.x, ly)
+      ctx.fillText(line, lx, ly)
       ly += 12
     }
     ctx.font = `400 9px ${MONO}`

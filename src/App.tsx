@@ -9,8 +9,11 @@
  *   3. ARRANGEMENT viewState.ts. How the reader wants them ordered and which
  *                 they have hidden for a particular figure.
  *
- * Composition order follows the reading order: choose the indication, see how
- * much there is, learn how to read it, then the timeline itself.
+ * Composition order follows the reading order, and the four views come FIRST.
+ * A reader who lands on a wall of filters and keys does not know there is more
+ * than one visualisation to be had; showing the choice at the top says what the
+ * page can do before asking anything of them. Filters, the summary and the key
+ * then sit immediately above whichever view they picked.
  */
 import { useEffect, useMemo, useState } from 'react'
 import { useDataset } from './data/useDataset'
@@ -35,8 +38,10 @@ import {
   isCustomOrder,
   moveEntry,
   nudge,
+  hideMany,
   resetOrder,
   showAll,
+  setClassOrder,
   setOrder,
   toggleHidden,
 } from './viewState'
@@ -101,28 +106,10 @@ export default function App() {
     <div className="mx-auto max-w-[1400px] px-6 md:px-10">
       <Header meta={meta} />
 
-      <Filters
-        entries={entries}
-        meta={meta}
-        state={filters}
-        setState={(update) => setFilters((f) => (f ? update(f) : f))}
-      />
-
-      <Summary
-        data={summary}
-        meta={meta}
-        filters={filters}
-        setFilters={(update) => setFilters((f) => (f ? update(f) : f))}
-      />
-
-      <Legend
-        entries={visible}
-        meta={meta}
-        showIntervalKeys={mode === 'timeline'}
-        showBandKey={mode !== 'charts'}
-      />
-
-      <div className="flex flex-wrap items-center gap-2 pt-4">
+      <div className="flex flex-wrap items-center gap-2 border-t border-hairline pt-5">
+        <span className="mr-1 text-[10px] font-semibold tracking-[0.16em] text-ink-soft uppercase">
+          View
+        </span>
         {(
           [
             ['timeline', 'Dosing timeline', 'Every entry on an ordinal dosing-interval axis'],
@@ -150,6 +137,27 @@ export default function App() {
         ))}
       </div>
 
+      <Filters
+        entries={entries}
+        meta={meta}
+        state={filters}
+        setState={(update) => setFilters((f) => (f ? update(f) : f))}
+      />
+
+      <Summary
+        data={summary}
+        meta={meta}
+        filters={filters}
+        setFilters={(update) => setFilters((f) => (f ? update(f) : f))}
+      />
+
+      <Legend
+        entries={visible}
+        meta={meta}
+        showIntervalKeys={mode === 'timeline'}
+        showBandKey={mode !== 'charts'}
+      />
+
       {(
         <ViewBar
           view={view}
@@ -175,6 +183,9 @@ export default function App() {
                 onHover={(entry, x, y) => setGridTip({ entry, x, y, pinned: false })}
                 onLeave={() => setGridTip(null)}
                 onHide={(id) => setView((v) => toggleHidden(v, id))}
+                onReorder={(classes) => setView((v) => setClassOrder(v, classes))}
+                onHideClass={(ids) => setView((v) => hideMany(v, ids))}
+                order={view}
               />
             )}
             {mode === 'agents' && (

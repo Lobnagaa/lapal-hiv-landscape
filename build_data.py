@@ -102,9 +102,17 @@ META = {
  #
  # The charts fold every combination class into one "Combination" series, which
  # keeps the stack to seven and inside the readable limit for a stacked bar.
- 'class_colours':{'Capsid inhibitor':'#922940','INSTI':'#436CC8','NNRTI':'#9A6700',
-                  'NRTI':'#009ED2','NRTTI':'#008B88','mAb':'#30A86A',
-                  'Combination':'#793480'},
+ # Categorical, so no ramp: class has no order. Chosen inside the register the
+ # rest of the dashboard uses (chroma 0.09 to 0.13, lightness 0.46 to 0.60 in
+ # OKLCH) rather than at full saturation, because the old set read as a rainbow
+ # pasted into a muted page. INSTI takes the Medical Blue hue. Nothing sits in
+ # the violet the phase ramp occupies, since the two charts sit side by side.
+ # Worst pair separates by dE 6.4 in normal vision and under simulated
+ # deuteranopia and protanopia alike.
+ 'class_colours':{'INSTI':'#3153A0','mAb':'#0093AE','Capsid inhibitor':'#7F387A',
+                  'NNRTI':'#8C4000','NRTI':'#896600','NRTTI':'#0A684E',
+                  'PI':'#688F31','Fusion inhibitor':'#71609A',
+                  'Combination':'#AD697B'},
  'class_singles':CLASS_SINGLES,
  'stage_tiers':{
     'Approved':{'colour':'#44B384','definition':'marketed in at least one jurisdiction'},
