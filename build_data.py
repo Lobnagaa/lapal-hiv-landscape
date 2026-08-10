@@ -68,9 +68,9 @@ FREQ_FULL  = {'1W':'Weekly','2W':'Every 2 weeks','1M':'Monthly','2M':'Every 2 mo
 META = {
  'title':'HIV long-acting therapeutics landscape',
  # Standfirst under the title. Edit here, not in the React components.
- 'intro':('Formulations, technologies, agents and regimens in the HIV long-acting space. '
-          'Researched and approved candidates, for treatment and prevention are shown, placed '
-          'on an ordinal dosing-interval axis. Live counts for the current selection are below.'),
+ 'intro':('Formulations, regimens and compounds in the HIV long-acting space (selected). '
+          'A selection of investigational and approved assets for treatment and/or prevention '
+          'are shown, with live counts for the current selection.'),
  'source':'Curated in hiv_curation.xlsx (Entries tab), built from LAPaL database extracts.',
  'record_bands':{'formulations':'Candidate or approved regimens and formulations',
                  'compounds':'Underlying agents researched or approved for use in HIV '
