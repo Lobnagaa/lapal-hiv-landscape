@@ -27,6 +27,7 @@ export function ViewBar({
   onResetOrder,
   onShowAll,
   onUnhide,
+  onOrderByInterval,
   mode = 'timeline',
 }: {
   view: ViewState
@@ -40,14 +41,22 @@ export function ViewBar({
   onResetOrder: () => void
   onShowAll: () => void
   onUnhide: (id: string) => void
+  /**
+   * Timeline only: replace the grouped-by-stage default with one flat list, by
+   * the entry's longest recorded dosing interval. Once applied it is a normal
+   * custom order, so a drag can still refine it and "Reset order" still
+   * returns to the grouped default.
+   */
+  onOrderByInterval?: () => void
   /** Which view is on screen; changes the hint and whether export is offered. */
   mode?: 'timeline' | 'agents' | 'grid' | 'charts'
 }) {
   const [listOpen, setListOpen] = useState(false)
   const custom = isCustomOrder(view)
-  // The grid rearranges classes rather than entries, so the reset control has to
-  // watch both or a moved class row cannot be put back.
-  const reordered = custom || view.classOrder.length > 0
+  // The grid rearranges classes and, within a cell, chips, rather than entries
+  // wholesale, so the reset control has to watch all three or a moved row or
+  // chip cannot be put back.
+  const reordered = custom || view.classOrder.length > 0 || Object.keys(view.cellOrder).length > 0
   const hidden = view.hidden.size
   const hiddenEntries = allEntries.filter((e) => view.hidden.has(e.id))
 
@@ -77,6 +86,17 @@ export function ViewBar({
           </>
         )}
       </p>
+
+      {mode === 'timeline' && !custom && onOrderByInterval && (
+        <button
+          type="button"
+          title="Every entry by its longest recorded dosing interval, longest first, regardless of band, product type or stage."
+          onClick={onOrderByInterval}
+          className="text-[12px] text-accent underline underline-offset-4 hover:opacity-70"
+        >
+          Order by dosing interval
+        </button>
+      )}
 
       {reordered && (
         <button
@@ -118,6 +138,7 @@ export function ViewBar({
           accent,
           arranged: reordered,
           classOrder: view.classOrder,
+          cellOrder: view.cellOrder,
           hiddenCount: hidden,
         }}
       />

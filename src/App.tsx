@@ -29,7 +29,7 @@ import { AgentPhase } from './components/AgentPhase'
 import { PhaseCharts } from './components/PhaseCharts'
 import { Tooltip, type TooltipTarget } from './components/Tooltip'
 import { accentFor, applyAccent } from './theme'
-import { groupEntries, sortByAdminOrder } from './encoding'
+import { groupEntries, sortByAdminOrder, sortByInterval } from './encoding'
 import { type FilterState, applyFilters, defaultFilters, summarise } from './filters'
 import {
   type ViewState,
@@ -41,6 +41,7 @@ import {
   hideMany,
   resetOrder,
   showAll,
+  setCellOrder,
   setClassOrder,
   setOrder,
   toggleHidden,
@@ -169,6 +170,7 @@ export default function App() {
           onResetOrder={() => setView(resetOrder)}
           onShowAll={() => setView(showAll)}
           onUnhide={(id) => setView((v) => toggleHidden(v, id))}
+          onOrderByInterval={() => setView((v) => setOrder(v, sortByInterval(visible, meta)))}
           mode={mode}
         />
       )}
@@ -185,6 +187,7 @@ export default function App() {
                 onHide={(id) => setView((v) => toggleHidden(v, id))}
                 onReorder={(classes) => setView((v) => setClassOrder(v, classes))}
                 onHideClass={(ids) => setView((v) => hideMany(v, ids))}
+                onReorderCell={(key, ids) => setView((v) => setCellOrder(v, key, ids))}
                 order={view}
               />
             )}

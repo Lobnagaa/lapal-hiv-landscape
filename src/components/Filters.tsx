@@ -51,47 +51,40 @@ export function Filters({
 
   return (
     <div className="py-6">
-      {/* indication: the primary control */}
-      <div className="mb-5">
-        <div className="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-ink uppercase">
-            Indication
-          </h2>
-          <p className="text-[12px] text-ink-soft">{meta.dual_use_note}</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {(['Treatment', 'Prevention'] as Indication[]).map((ind) => {
-            const on = state.indications.has(ind)
-            const colour = ind === 'Treatment' ? 'var(--color-treatment)' : 'var(--color-prevention)'
-            return (
-              <button
-                key={ind}
-                type="button"
-                aria-pressed={on}
-                onClick={() =>
-                  setState((s) => ({ ...s, indications: toggleIn(s.indications, ind) }))
-                }
-                className="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-colors"
-                style={{
-                  borderColor: on ? colour : 'var(--color-hairline)',
-                  background: on ? `color-mix(in srgb, ${colour} 12%, transparent)` : 'transparent',
-                  color: on ? colour : 'var(--color-ink-soft)',
-                }}
-              >
-                {ind}
-              </button>
-            )
-          })}
-          {state.indications.size === 0 && (
-            <span className="self-center text-[12px] text-flag">
-              Select at least one indication to see entries.
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* everything else */}
+      {/*
+        Indication used to be a standalone hero section, sized and weighted well
+        above everything else in the filter bar. It decides the chrome accent
+        and what is in scope, but functionally it is one more toggle, so it now
+        sits at the same size as the rest of this row rather than announcing
+        itself as a different kind of control.
+      */}
       <div className="flex flex-wrap items-center gap-2">
+        <span
+          title={meta.dual_use_note}
+          className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase"
+        >
+          Indication
+        </span>
+        {(['Treatment', 'Prevention'] as Indication[]).map((ind) => {
+          const on = state.indications.has(ind)
+          const colour = ind === 'Treatment' ? 'var(--color-treatment)' : 'var(--color-prevention)'
+          return (
+            <Toggle
+              key={ind}
+              on={on}
+              accent={colour}
+              onClick={() => setState((s) => ({ ...s, indications: toggleIn(s.indications, ind) }))}
+            >
+              {ind}
+            </Toggle>
+          )
+        })}
+        {state.indications.size === 0 && (
+          <span className="text-[11px] text-flag">Select at least one indication to see entries.</span>
+        )}
+
+        <span className="mx-1 hidden h-5 w-px bg-hairline sm:block" />
+
         <SearchBox
           value={state.search}
           onChange={(search) => setState((s) => ({ ...s, search }))}

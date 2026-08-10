@@ -228,6 +228,35 @@ function compareWithinStage(a: Entry, b: Entry, meta: Meta): number {
 }
 
 /**
+ * Order every entry by its dosing interval alone, ignoring band, stage and
+ * everything else. This is the reading a reader wants when they ask "what is
+ * dosed every twelve months, no matter what it is or how far along it is":
+ * the stage-grouped default deliberately buries that comparison inside each
+ * colour block, and this flattens it back out.
+ *
+ * ASSUMPTION, stated because the data does not resolve it: when an entry has
+ * more than one interval on record, its LONGEST one decides its position. A
+ * reader sorting this way is asking "how infrequently can this be dosed", and
+ * the longest interval is the honest answer to that; the shortest one is
+ * already visible on the entry's own row regardless of where the row sits.
+ * Not-stated entries sort last, as they do everywhere else in this file.
+ *
+ * Returns ids, ready for setOrder, exactly like the agents table's own sort.
+ */
+export function sortByInterval(entries: Entry[], meta: Meta): string[] {
+  return [...entries]
+    .sort((a, b) => {
+      const ma = rowMarks(a, meta)
+      const mb = rowMarks(b, meta)
+      const ka = ma.notStated ? -1 : (ma.dotIndices[ma.dotIndices.length - 1] ?? -1)
+      const kb = mb.notStated ? -1 : (mb.dotIndices[mb.dotIndices.length - 1] ?? -1)
+      if (ka !== kb) return kb - ka
+      return a.name_full.localeCompare(b.name_full, 'en-GB')
+    })
+    .map((e) => e.id)
+}
+
+/**
  * Order the entries as one flat list, for meta.default_order_mode === 'manual'.
  *
  * Band and stage grouping is switched off entirely and the curator's `order`

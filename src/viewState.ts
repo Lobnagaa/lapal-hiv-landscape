@@ -36,10 +36,21 @@ export interface ViewState {
    * is nothing an entry-level order could move. Empty until they drag a row.
    */
   classOrder: string[]
+  /**
+   * Chip order WITHIN a single class-grid cell, keyed by `${class}||${phase}`.
+   *
+   * A chip's cell is fixed by its class and phase, exactly like a row's cell
+   * above, but several chips can share one cell and the reader may want a say
+   * in which comes first. This is deliberately its own map rather than folded
+   * into `order`: two chips in different cells are never compared against each
+   * other, so giving every cell an independent list, rather than one global
+   * ranking, means reordering cell A can never disturb cell B's arrangement.
+   */
+  cellOrder: Record<string, string[]>
 }
 
 export function defaultView(): ViewState {
-  return { order: [], hidden: new Set(), classOrder: [] }
+  return { order: [], hidden: new Set(), classOrder: [], cellOrder: {} }
 }
 
 /** True once the reader has taken control of the ordering. */
@@ -48,7 +59,12 @@ export function isCustomOrder(v: ViewState): boolean {
 }
 
 export function isArranged(v: ViewState): boolean {
-  return isCustomOrder(v) || v.hidden.size > 0 || v.classOrder.length > 0
+  return (
+    isCustomOrder(v) ||
+    v.hidden.size > 0 ||
+    v.classOrder.length > 0 ||
+    Object.keys(v.cellOrder).length > 0
+  )
 }
 
 /** Put the class grid's rows in the order given, which is the order it drew. */
@@ -63,6 +79,27 @@ export function arrangeClasses(classes: string[], v: ViewState): string[] {
   const known = classes.filter((c) => rank.has(c))
   const rest = classes.filter((c) => !rank.has(c))
   known.sort((a, b) => (rank.get(a) ?? 0) - (rank.get(b) ?? 0))
+  return [...known, ...rest]
+}
+
+/** The key one class-grid cell is stored under in `cellOrder`. */
+export function cellKey(cls: string, phase: string): string {
+  return `${cls}||${phase}`
+}
+
+/** Put one cell's chips in the order given, which is the order the cell drew. */
+export function setCellOrder(v: ViewState, key: string, ids: string[]): ViewState {
+  return { ...v, cellOrder: { ...v.cellOrder, [key]: ids } }
+}
+
+/** Apply a cell's chosen chip order, unknown chips last. */
+export function arrangeCell(items: Entry[], v: ViewState, key: string): Entry[] {
+  const custom = v.cellOrder[key]
+  if (!custom || custom.length === 0) return items
+  const rank = new Map(custom.map((id, i) => [id, i]))
+  const known = items.filter((e) => rank.has(e.id))
+  const rest = items.filter((e) => !rank.has(e.id))
+  known.sort((a, b) => (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0))
   return [...known, ...rest]
 }
 
@@ -160,5 +197,5 @@ export function showAll(v: ViewState): ViewState {
 }
 
 export function resetOrder(v: ViewState): ViewState {
-  return { ...v, order: [], classOrder: [] }
+  return { ...v, order: [], classOrder: [], cellOrder: {} }
 }

@@ -25,7 +25,7 @@ import type { Entry, Meta } from '../types'
 import { indicationBadge, phaseLabel } from '../types'
 import { BandTag } from './BandTag'
 import { foldClass } from '../charts'
-import { arrangeClasses } from '../viewState'
+import { arrangeCell, arrangeClasses, cellKey } from '../viewState'
 import type { ViewState } from '../viewState'
 
 export interface ClassGridProps {
@@ -48,8 +48,30 @@ export interface ClassGridProps {
    */
   onReorder: (classes: string[]) => void
   onHideClass: (ids: string[]) => void
-  /** The reader's arrangement, for the row order. */
+  /**
+   * Reorder the chips inside one cell. `key` identifies the cell (see
+   * viewState.cellKey); `ids` is that cell's chips in their new order. Scoped
+   * to the cell, not the whole grid, because a chip's cell is fixed by its
+   * class and phase and there is nowhere else for it to go.
+   */
+  onReorderCell: (key: string, ids: string[]) => void
+  /** The reader's arrangement, for the row order and every cell's order. */
   order: ViewState
+}
+
+/**
+ * Move `from` next to `target` within `list`, on the side the drag direction
+ * implies. Shared by the row drag and the within-cell chip drag; the same
+ * before/after rule applies whichever axis is being reordered.
+ */
+function reorderList(list: string[], from: string, target: string): string[] {
+  const fromIdx = list.indexOf(from)
+  const targetIdx = list.indexOf(target)
+  if (fromIdx < 0 || targetIdx < 0) return list
+  const next = list.filter((id) => id !== from)
+  const insertAt = targetIdx > fromIdx ? next.indexOf(target) + 1 : next.indexOf(target)
+  next.splice(insertAt, 0, from)
+  return next
 }
 
 /** Only ever open a plain web address. Mirrors the guard in Timeline.tsx. */
@@ -71,6 +93,7 @@ export function ClassGrid({
   onHide,
   onReorder,
   onHideClass,
+  onReorderCell,
   order,
 }: ClassGridProps) {
   const phases = meta.phase_order ?? []
@@ -100,10 +123,20 @@ export function ClassGrid({
     dragged.current = null
     setOverRow(null)
     if (!from || from === target) return
-    const next = rows.filter((c) => c !== from)
-    next.splice(rows.indexOf(target) > rows.indexOf(from) ? next.indexOf(target) + 1 : next.indexOf(target), 0, from)
-    onReorder(next)
+    onReorder(reorderList(rows, from, target))
   }
+
+  // Chip drag, within one cell only: a second ref/state pair, kept separate
+  // from the row drag above so the two gestures can never be read as each
+  // other's drop target.
+  const draggedItem = useRef<{ id: string; key: string } | null>(null)
+  const [armedItem, setArmedItem] = useState<string | null>(null)
+  const [dragItemId, setDragItemId] = useState<string | null>(null)
+  const [overItem, setOverItem] = useState<{ key: string; id: string } | null>(null)
+  // A drag ends with a click in some browsers; without this the release opened
+  // the chip's LAPaL link instead of finishing the reorder. Same guard the
+  // timeline and the agents table already use.
+  const chipClickGuard = useRef(false)
 
   const cell = (cls: string, phase: string) =>
     entries.filter(
@@ -247,7 +280,9 @@ export function ClassGrid({
               </div>
 
               {cols.map((phase) => {
-                const items = cell(cls, phase)
+                const key = cellKey(cls, phase)
+                const items = arrangeCell(cell(cls, phase), order, key)
+                const ids = items.map((e) => e.id)
                 const tint = phase === '__none__' ? undefined : meta.phase_colours?.[phase]
                 return (
                   <div
@@ -270,6 +305,36 @@ export function ClassGrid({
                           onHover={onHover}
                           onLeave={onLeave}
                           onHide={onHide}
+                          armed={armedItem === e.id}
+                          dragging={dragItemId === e.id}
+                          over={overItem?.key === key && overItem?.id === e.id}
+                          clickGuard={chipClickGuard}
+                          onArm={() => setArmedItem(e.id)}
+                          onDisarm={() => setArmedItem(null)}
+                          onDragStart={() => {
+                            draggedItem.current = { id: e.id, key }
+                            chipClickGuard.current = true
+                            setDragItemId(e.id)
+                          }}
+                          onDragEnd={() => {
+                            setArmedItem(null)
+                            setDragItemId(null)
+                            setOverItem(null)
+                            draggedItem.current = null
+                            setTimeout(() => {
+                              chipClickGuard.current = false
+                            }, 0)
+                          }}
+                          onDragOver={() => {
+                            if (!draggedItem.current || draggedItem.current.key !== key) return
+                            setOverItem({ key, id: e.id })
+                          }}
+                          onDrop={() => {
+                            const from = draggedItem.current
+                            setOverItem(null)
+                            if (!from || from.key !== key || from.id === e.id) return
+                            onReorderCell(key, reorderList(ids, from.id, e.id))
+                          }}
                         />
                       ))}
                     </div>
@@ -288,6 +353,11 @@ export function ClassGrid({
  * One agent. The leading tag says whether this is a formulation or the
  * underlying compound: the cell already encodes phase, so repeating stage here
  * would say the same thing twice.
+ *
+ * The grip arms a drag that can only land on another chip in the SAME cell,
+ * since a chip's cell is fixed by its class and phase; the drop handlers above
+ * enforce that. The whole chip stays a link, so the grip and the eye icon are
+ * the only parts that intercept a click, exactly as in the timeline row.
  */
 function AgentChip({
   entry,
@@ -295,12 +365,36 @@ function AgentChip({
   onHover,
   onLeave,
   onHide,
+  armed,
+  dragging,
+  over,
+  clickGuard,
+  onArm,
+  onDisarm,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDrop,
 }: {
   entry: Entry
   meta: Meta
   onHover: (e: Entry, x: number, y: number) => void
   onLeave: () => void
   onHide: (id: string) => void
+  /** True while this chip's grip is held, which is what arms `draggable`. */
+  armed: boolean
+  /** True while this specific chip is the one being dragged. */
+  dragging: boolean
+  /** True while a dragged chip is over this one, as the drop target. */
+  over: boolean
+  /** Shared with every chip in the grid: true for one tick after any drop. */
+  clickGuard: { current: boolean }
+  onArm: () => void
+  onDisarm: () => void
+  onDragStart: () => void
+  onDragEnd: () => void
+  onDragOver: () => void
+  onDrop: () => void
 }) {
   const href = safeUrl(entry.lapal_url)
   const badge = indicationBadge(entry)
@@ -315,6 +409,20 @@ function AgentChip({
           : `${entry.name_full}, ${entry.stage}, ${badge}`
       }
       title={entry.name_full}
+      draggable={armed}
+      onDragStart={(ev) => {
+        ev.dataTransfer.effectAllowed = 'move'
+        onDragStart()
+      }}
+      onDragEnd={onDragEnd}
+      onDragOver={(ev) => {
+        ev.preventDefault()
+        onDragOver()
+      }}
+      onDrop={(ev) => {
+        ev.preventDefault()
+        onDrop()
+      }}
       onMouseMove={(ev) => onHover(entry, ev.clientX, ev.clientY)}
       onMouseLeave={onLeave}
       onFocus={(ev) => {
@@ -322,11 +430,37 @@ function AgentChip({
         onHover(entry, r.left, r.bottom)
       }}
       onBlur={onLeave}
-      onClick={() => href && window.open(href, '_blank', 'noopener,noreferrer')}
-      className={`group/chip flex max-w-full items-start gap-1 rounded border border-hairline bg-white px-1.5 py-1 text-left transition-colors hover:border-accent ${
+      onClick={() => {
+        if (clickGuard.current) return
+        if (href) window.open(href, '_blank', 'noopener,noreferrer')
+      }}
+      className={`group/chip flex max-w-full items-start gap-1 rounded border bg-white px-1.5 py-1 text-left transition-colors hover:border-accent ${
         href ? 'cursor-pointer' : 'cursor-default'
-      }`}
+      } ${dragging ? 'opacity-40' : ''}`}
+      style={{
+        borderColor: over ? 'var(--color-accent)' : 'var(--color-hairline)',
+        boxShadow: over ? 'inset 0 0 0 1px var(--color-accent)' : undefined,
+      }}
     >
+      <span
+        role="button"
+        tabIndex={-1}
+        aria-label={`Drag to reorder ${entry.name_full} within this cell`}
+        title="Drag to reorder within this cell"
+        onMouseDown={(ev) => {
+          ev.stopPropagation()
+          onArm()
+        }}
+        onMouseUp={onDisarm}
+        onClick={(ev) => ev.stopPropagation()}
+        className="mt-px shrink-0 cursor-grab text-ink-soft opacity-0 transition-opacity group-hover/chip:opacity-60 active:cursor-grabbing"
+      >
+        <svg width="7" height="11" viewBox="0 0 7 11" aria-hidden fill="currentColor">
+          <circle cx="1.5" cy="1.5" r="1.1" /><circle cx="5.5" cy="1.5" r="1.1" />
+          <circle cx="1.5" cy="5.5" r="1.1" /><circle cx="5.5" cy="5.5" r="1.1" />
+          <circle cx="1.5" cy="9.5" r="1.1" /><circle cx="5.5" cy="9.5" r="1.1" />
+        </svg>
+      </span>
       <span className="mt-px">
         <BandTag band={entry.band} meta={meta} />
       </span>

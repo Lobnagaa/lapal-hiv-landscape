@@ -23,7 +23,7 @@ import { loadImage } from '../assets'
 import { buildPdf } from './pdf'
 import { buildZip } from './zip'
 import { axisScale, classLegend, columnsByClass, columnsByPhase, foldClass, phaseLegend } from '../charts'
-import { arrangeClasses } from '../viewState'
+import { arrangeCell, arrangeClasses, cellKey } from '../viewState'
 
 /* --------------------------------------------------------------- editable */
 
@@ -126,6 +126,8 @@ export interface ExportOptions {
    * to match the screen, and class order is not recoverable from `entries`.
    */
   classOrder?: string[]
+  /** The reader's per-cell chip order in the class grid, keyed as in viewState.cellKey. */
+  cellOrder?: Record<string, string[]>
 }
 
 interface Assets {
@@ -503,7 +505,7 @@ function drawSheet(o: SheetOpts): HTMLCanvasElement {
   } else if (view === 'agents') {
     drawAgentsBody(ctx, bodyArea, rows, meta)
   } else if (view === 'grid') {
-    drawGridBody(ctx, bodyArea, rows, meta, o.classOrder ?? [])
+    drawGridBody(ctx, bodyArea, rows, meta, o.classOrder ?? [], o.cellOrder ?? {})
   } else {
     drawChartsBody(ctx, bodyArea, rows, meta)
   }
@@ -794,6 +796,7 @@ function drawGridBody(
   rows: Entry[],
   meta: Meta,
   classOrder: string[] = [],
+  cellOrder: Record<string, string[]> = {},
 ) {
   const p = meta.palette
   const phases = meta.phase_order ?? []
@@ -803,7 +806,7 @@ function drawGridBody(
   const unclassified = rows.some((e) => !e.class_group)
   const rowKeys = arrangeClasses(
     [...classes, ...(unclassified ? ['__none__'] : [])],
-    { order: [], hidden: new Set(), classOrder },
+    { order: [], hidden: new Set(), classOrder, cellOrder },
   )
 
   const labelW = Math.round(area.w * 0.16)
@@ -839,9 +842,10 @@ function drawGridBody(
 
     cols.forEach((c, k) => {
       const tint = c === '__none__' ? null : meta.phase_colours?.[c]
-      const items = inCls.filter((e) =>
+      const cellItems = inCls.filter((e) =>
         c === '__none__' ? !e.highest_phase : e.highest_phase === c,
       )
+      const items = arrangeCell(cellItems, { order: [], hidden: new Set(), classOrder: [], cellOrder }, cellKey(cls, c))
       if (tint && items.length) {
         ctx.globalAlpha = 0.4
         ctx.fillStyle = tint
