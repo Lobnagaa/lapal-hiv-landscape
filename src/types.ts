@@ -276,6 +276,12 @@ export interface Meta {
    * reaches via "Order by dosing interval". Set in build_data.py.
    */
   default_timeline_order?: 'grouped' | 'interval'
+  /**
+   * The Agents by phase view's own starting sort, matching its Sort buttons:
+   * name (A to Z) | phase (Most advanced) | class | stage | band (Entry type).
+   * Set in build_data.py, or the "Default agents sort" cell in the workbook.
+   */
+  default_agents_order?: 'name' | 'phase' | 'class' | 'stage' | 'band'
   /** Stage name -> colour and definition. Also defines the stage sort order. */
   stage_tiers: Record<string, StageTier>
   palette: Palette

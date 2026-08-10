@@ -49,6 +49,16 @@ DEFAULT_VIEW_LABELS = {
     'Counts': 'charts',
 }
 
+# Same idea, cell B5 ("Default agents sort"), for the Agents by phase view's
+# own Sort buttons. Labels match those buttons' text exactly.
+DEFAULT_AGENTS_SORT_LABELS = {
+    'A to Z': 'name',
+    'Most advanced': 'phase',
+    'Class': 'class',
+    'Stage': 'stage',
+    'Entry type': 'band',
+}
+
 ROUTE_FULL = {'PO':'Oral','SC':'Subcutaneous','IM':'Intramuscular','IV':'Intravenous',
               'VR':'Topical (Vaginal)','TD':'Transdermal'}
 FREQ_FULL  = {'1W':'Weekly','2W':'Every 2 weeks','1M':'Monthly','2M':'Every 2 months',
@@ -181,6 +191,14 @@ META = {
  #               interval, longest first, the same arrangement the reader
  #               reaches by clicking "Order by dosing interval".
  'default_timeline_order':'grouped',
+ # The Agents by phase view's own starting sort, matching its Sort buttons
+ # exactly: 'name' | 'phase' | 'class' | 'stage' | 'band'.
+ #
+ # Fallback only, same relationship default_view has to its own dropdown: the
+ # "Legend & how to use" sheet's Default agents sort cell (B5) overrides this
+ # at build time when set, so a curator changes it in the workbook rather
+ # than here.
+ 'default_agents_order':'name',
  'typeface':'Manrope',
  'encoding_notes':[
     'Dosing axis is ordinal, not to scale.',
@@ -207,6 +225,8 @@ assert META['default_view'] in ('timeline','agents','grid','charts'), \
     f"default_view must be one of timeline/agents/grid/charts, got {META['default_view']!r}"
 assert META['default_timeline_order'] in ('grouped','interval'), \
     f"default_timeline_order must be 'grouped' or 'interval', got {META['default_timeline_order']!r}"
+assert META['default_agents_order'] in ('name','phase','class','stage','band'), \
+    f"default_agents_order must be one of name/phase/class/stage/band, got {META['default_agents_order']!r}"
 
 
 def main():
@@ -237,6 +257,17 @@ def main():
                 )
             else:
                 META['default_view'] = DEFAULT_VIEW_LABELS[raw_view]
+
+        # Same idea, cell B5, for the Agents by phase view's own starting sort.
+        raw_sort = cell(wb['Legend & how to use']['B5'].value)
+        if raw_sort:
+            if raw_sort not in DEFAULT_AGENTS_SORT_LABELS:
+                errors.append(
+                    f'"Legend & how to use" B5 (Default agents sort): must be one of '
+                    f'{list(DEFAULT_AGENTS_SORT_LABELS)}, got "{raw_sort}"'
+                )
+            else:
+                META['default_agents_order'] = DEFAULT_AGENTS_SORT_LABELS[raw_sort]
 
     seq=0
     for rn, raw in enumerate(rows[2:], start=3):

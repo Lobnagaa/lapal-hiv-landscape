@@ -60,7 +60,13 @@ export function AgentPhase({
     onHide: (id: string) => void
   }
 }) {
-  const [sort, setSort] = useState<SortKey>('name')
+  // The curator's own starting sort, when they have set one. A lazy
+  // initialiser rather than an effect: this component is mounted fresh each
+  // time the reader switches to this view (App.tsx renders it conditionally),
+  // so re-reading meta on every fresh mount already gives the right result
+  // without needing the once-only guard App.tsx uses for the view switch
+  // itself, which never unmounts.
+  const [sort, setSort] = useState<SortKey>(() => meta.default_agents_order ?? 'name')
   const [dragId, setDragId] = useState<string | null>(null)
   const [dropIndex, setDropIndex] = useState<number | null>(null)
   const dragIdRef = useRef<string | null>(null)
