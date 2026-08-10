@@ -38,6 +38,17 @@ CLASSES = CLASS_SINGLES + CLASS_COMBOS
 # Clinical phases in order, least to most advanced. Drives the phase chip ramp.
 PHASES = ['Preclinical','Phase I','Phase I/II','Phase II','Phase II/III','Phase III','Phase IV']
 
+# The curator's dropdown on the "Legend & how to use" sheet (cell B3, "Default
+# view") speaks in the same words as the on-screen tabs, since that is what the
+# curator recognises; this maps that wording to the internal code the
+# dashboard actually reads. Keep both lists in the same order.
+DEFAULT_VIEW_LABELS = {
+    'Dosing timeline': 'timeline',
+    'Agents by phase': 'agents',
+    'Class and phase': 'grid',
+    'Counts': 'charts',
+}
+
 ROUTE_FULL = {'PO':'Oral','SC':'Subcutaneous','IM':'Intramuscular','IV':'Intravenous',
               'VR':'Topical (Vaginal)','TD':'Transdermal'}
 FREQ_FULL  = {'1W':'Weekly','2W':'Every 2 weeks','1M':'Monthly','2M':'Every 2 months',
@@ -148,6 +159,11 @@ META = {
  'default_order_mode':'grouped',
  # Which of the four views the page opens on, before the reader has clicked
  # anything. One of 'timeline', 'agents', 'grid', 'charts'.
+ #
+ # Fallback only: the "Legend & how to use" sheet's Default view dropdown
+ # (cell B3) overrides this at build time when it is set, so a curator changes
+ # it in the workbook rather than here. This value is what a blank cell falls
+ # back to.
  'default_view':'timeline',
  # The dosing timeline's own starting arrangement, independent of which view
  # opens first. Only takes effect when default_view is 'timeline', but is kept
@@ -200,6 +216,22 @@ def main():
         if req not in idx: fail([f'Missing column "{req}" on the Entries header row.'])
 
     errors=[]; entries=[]; excluded=[]; used_ids=set()
+
+    # The curator's own choice of starting view, if they have set one. Read
+    # from the workbook rather than only build_data.py so this is a spreadsheet
+    # edit like any other, not a code change. A blank cell is not an error: it
+    # just leaves META['default_view'] at the fallback set above.
+    if 'Legend & how to use' in wb.sheetnames:
+        raw_view = cell(wb['Legend & how to use']['B3'].value)
+        if raw_view:
+            if raw_view not in DEFAULT_VIEW_LABELS:
+                errors.append(
+                    f'"Legend & how to use" B3 (Default view): must be one of '
+                    f'{list(DEFAULT_VIEW_LABELS)}, got "{raw_view}"'
+                )
+            else:
+                META['default_view'] = DEFAULT_VIEW_LABELS[raw_view]
+
     seq=0
     for rn, raw in enumerate(rows[2:], start=3):
         g = lambda h: cell(raw[idx[h]]) if h in idx and idx[h] < len(raw) else ''
