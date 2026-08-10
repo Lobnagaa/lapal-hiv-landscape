@@ -165,7 +165,7 @@
   "default_order_mode": "grouped",
   "default_view": "agents",
   "default_timeline_order": "grouped",
-  "default_agents_order": "name",
+  "default_agents_order": "phase",
   "typeface": "Manrope",
   "encoding_notes": [
    "Dosing axis is ordinal, not to scale.",
