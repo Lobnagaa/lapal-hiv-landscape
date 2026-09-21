@@ -133,12 +133,15 @@ META = {
  # rest of the dashboard uses (chroma 0.09 to 0.13, lightness 0.46 to 0.60 in
  # OKLCH) rather than at full saturation, because the old set read as a rainbow
  # pasted into a muted page. INSTI takes the Medical Blue hue. Nothing sits in
- # the violet the phase ramp occupies, since the two charts sit side by side.
- # Worst pair separates by dE 6.4 in normal vision and under simulated
- # deuteranopia and protanopia alike.
+ # the violet the phase ramp occupies (hue about 295), since the two charts sit
+ # side by side. Fusion inhibitor used to: it was violet, at hue 297, and once
+ # entries were filed under it, it read as one more phase shade. It is now a
+ # mid blue (hue 260), at least 9 dE from every other class in normal vision
+ # and under simulated deuteranopia and protanopia. The worst pair in the whole
+ # set is now NNRTI / NRTI at dE 6.7, in normal vision and both simulations.
  'class_colours':{'INSTI':'#3153A0','mAb':'#0093AE','Capsid inhibitor':'#7F387A',
                   'NNRTI':'#8C4000','NRTI':'#896600','NRTTI':'#0A684E',
-                  'PI':'#688F31','Fusion inhibitor':'#71609A',
+                  'PI':'#688F31','Fusion inhibitor':'#4373C3',
                   'Combination':'#AD697B'},
  'class_singles':CLASS_SINGLES,
  'stage_tiers':{

@@ -79,7 +79,7 @@
    "NRTI": "#896600",
    "NRTTI": "#0A684E",
    "PI": "#688F31",
-   "Fusion inhibitor": "#71609A",
+   "Fusion inhibitor": "#4373C3",
    "Combination": "#AD697B"
   },
   "class_singles": [
@@ -178,7 +178,7 @@
   "dual_use_note": "Entries indicated for both treatment and prevention appear once, tagged Both.",
   "disclaimer": "LAPaL reflects a curated snapshot at a point in time. Efforts are put to refresh content on a rolling basis as new public information appears.",
   "curation": {
-   "excluded_count": 15,
+   "excluded_count": 16,
    "excluded": [
     {
      "id": "f003",
@@ -237,7 +237,7 @@
     },
     {
      "id": "c037",
-     "name_full": "VH-310 (VH-4367310)",
+     "name_full": "VH-310 (VH-4367310; cabotegravir stearate; XVIR-110)",
      "reason": null
     },
     {
@@ -254,6 +254,11 @@
      "id": "c043",
      "name_full": "Depulfavirine nanosphere LAI",
      "reason": null
+    },
+    {
+     "id": "c053",
+     "name_full": "GS-1219",
+     "reason": "Discontinued"
     }
    ]
   },
@@ -262,6 +267,7 @@
    "INSTI",
    "Capsid inhibitor",
    "NNRTI",
+   "Fusion inhibitor",
    "NRTTI",
    "Capsid inhibitor + INSTI",
    "INSTI + NNRTI",
@@ -289,6 +295,7 @@
    "NRTTI + NNRTI"
   ],
   "known_data_issues": [
+   "1 entries have no recorded dosing interval.",
    "Approved but missing regulatory rows: Dapivirine ring monthly."
   ]
  },
@@ -323,8 +330,8 @@
    "lapal_url": "https://lapal.ch/formulations/lenacapavir-6-monthly",
    "display_order": null,
    "therapeutic_areas": "HIV",
-   "use_case_raw": "Prevention",
-   "is_treatment": false,
+   "use_case_raw": "Both",
+   "is_treatment": true,
    "is_prevention": true,
    "flags": {
     "missing_frequency": false,
@@ -486,12 +493,12 @@
    ],
    "frequency_provenance": "manually confirmed",
    "stage": "Late-stage",
-   "highest_phase": "Phase II",
+   "highest_phase": "Phase III",
    "on_hold": false,
    "developers_full": [
     "Gilead"
    ],
-   "drug_class": "2 bNAbs targeting gp120 on HIV-1 envelope",
+   "drug_class": "2 bNAbs targeting gp120 on HIV-1 envelope (CD4bs and V3 loop respectively)",
    "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/teropavimab-zinlirvimab",
    "display_order": null,
@@ -565,10 +572,10 @@
     "Intravenous"
    ],
    "frequencies": [
-    "1W"
+    "2W"
    ],
    "frequencies_full": [
-    "Weekly"
+    "Every 2 weeks"
    ],
    "frequency_provenance": "manually confirmed",
    "stage": "Approved",
@@ -640,7 +647,7 @@
   {
    "id": "f010",
    "band": "formulations",
-   "name_full": "VRC07-523LS (mAb)",
+   "name_full": "VRC07-523LS (mAb) (TMB-380)",
    "routes": [
     "SC",
     "IM",
@@ -652,26 +659,33 @@
     "Intravenous"
    ],
    "frequencies": [
-    "3M"
+    "2M",
+    "3M",
+    "4M",
+    "6M"
    ],
    "frequencies_full": [
-    "Every 3 months"
+    "Every 2 months",
+    "Every 3 months",
+    "Every 4 months",
+    "Every 6 months"
    ],
-   "frequency_provenance": "LAPaL record",
+   "frequency_provenance": "manually confirmed",
    "stage": "Early-stage",
    "highest_phase": "Phase II",
    "on_hold": false,
    "developers_full": [
-    "NIAID"
+    "NIAID",
+    "TaiMed Biologics"
    ],
    "drug_class": "bNAb targeting gp120 on HIV-1 virus envelope",
    "class_group": "mAb",
    "lapal_url": "https://lapal.ch/formulations/vrc07-523ls-mab",
    "display_order": null,
    "therapeutic_areas": "HIV",
-   "use_case_raw": "Treatment",
+   "use_case_raw": "Both",
    "is_treatment": true,
-   "is_prevention": false,
+   "is_prevention": true,
    "flags": {
     "missing_frequency": false,
     "frequency_derived_from_trials": false,
@@ -686,24 +700,22 @@
    "band": "formulations",
    "name_full": "Cabotegravir + Lenacapavir",
    "routes": [
-    "PO",
     "SC",
     "IM"
    ],
    "routes_full": [
-    "Oral",
     "Subcutaneous",
     "Intramuscular"
    ],
    "frequencies": [
-    "1M",
-    "2M"
+    "2M",
+    "6M"
    ],
    "frequencies_full": [
-    "Monthly",
-    "Every 2 months"
+    "Every 2 months",
+    "Every 6 months"
    ],
-   "frequency_provenance": "LAPaL record",
+   "frequency_provenance": "manually confirmed",
    "stage": "Late-stage",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -787,7 +799,7 @@
    ],
    "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
-   "highest_phase": "Phase III",
+   "highest_phase": "Phase II",
    "on_hold": false,
    "developers_full": [
     "ViiV Healthcare"
@@ -1312,7 +1324,7 @@
   {
    "id": "c041",
    "band": "compounds",
-   "name_full": "VH-499 (VH-4011499)",
+   "name_full": "Fremocapavir (VH-499; VH-4011499)",
    "routes": [
     "PO",
     "SC",
@@ -1338,7 +1350,8 @@
    "highest_phase": "Phase II",
    "on_hold": false,
    "developers_full": [
-    "ViiV Healthcare"
+    "ViiV Healthcare",
+    "Shionogi"
    ],
    "drug_class": "Capsid inhibitor",
    "class_group": "Capsid inhibitor",
@@ -1463,7 +1476,7 @@
    ],
    "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
-   "highest_phase": "Phase I/II",
+   "highest_phase": "Phase I",
    "on_hold": false,
    "developers_full": [
     "Gilead"
@@ -1481,7 +1494,7 @@
     "frequency_derived_from_trials": false,
     "derived_frequency_needs_review": false,
     "conventional_approval_only": false,
-    "no_linked_trials": true,
+    "no_linked_trials": false,
     "approved_but_no_regulatory_rows": false
    }
   },
@@ -1587,7 +1600,7 @@
    ],
    "frequency_provenance": "manually confirmed",
    "stage": "Late-stage",
-   "highest_phase": "Phase II/III",
+   "highest_phase": "Phase III",
    "on_hold": false,
    "developers_full": [
     "ViiV Healthcare",
@@ -1641,6 +1654,466 @@
    "use_case_raw": "Prevention",
    "is_treatment": false,
    "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f034",
+   "band": "formulations",
+   "name_full": "TMB-365 + TMB-380",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "2M"
+   ],
+   "frequencies_full": [
+    "Every 2 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "on_hold": false,
+   "developers_full": [
+    "TaiMed Biologics"
+   ],
+   "drug_class": "CD4-directed post-attachment inhibitor mAb (TMB-365) + CD4 binding site bNAb (TMB-380, VRC07-523LS)",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/formulations/tmb-365-tmb-380",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f035",
+   "band": "formulations",
+   "name_full": "VH-079 (VH4527079)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "on_hold": false,
+   "developers_full": [
+    "ViiV Healthcare"
+   ],
+   "drug_class": "Human monoclonal antibody (epitopes not disclosed)",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/formulations/vh-079-vh4527079",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f036",
+   "band": "formulations",
+   "name_full": "10E8.4/iMab",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "not stated",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "on_hold": false,
+   "developers_full": [
+    "Columbia University"
+   ],
+   "drug_class": "Bispecific bNAb (gp41 MPER arm + anti-CD4 post-attachment arm)",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/formulations/10e84imab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f037",
+   "band": "formulations",
+   "name_full": "Semzuvolimab (UB-421)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "1W",
+    "2W",
+    "1M"
+   ],
+   "frequencies_full": [
+    "Weekly",
+    "Every 2 weeks",
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "on_hold": true,
+   "developers_full": [
+    "United BioPharma"
+   ],
+   "drug_class": "CD4 attachment inhibitor (humanised anti-CD4 IgG1 mAb)",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/formulations/semzuvolimab-ub-421",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c046",
+   "band": "compounds",
+   "name_full": "GS-1614",
+   "routes": [
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "3M"
+   ],
+   "frequencies_full": [
+    "Every 3 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "on_hold": true,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "NRTTI prodrug (islatravir prodrug)",
+   "class_group": "NRTTI",
+   "lapal_url": "https://lapal.ch/compounds/gs-1614",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c047",
+   "band": "compounds",
+   "name_full": "Teropavimab (TAB) (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "manually confirmed",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "on_hold": false,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "bNAb targeting the CD4 binding site of gp120 on HIV-1 envelope",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/compounds/teropavimab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c048",
+   "band": "compounds",
+   "name_full": "Zinlirvimab (ZAB) (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "on_hold": false,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "bNAb targeting the V3 glycan supersite of gp120 on HIV-1 envelope",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/compounds/zinlirvimab-zab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c049",
+   "band": "compounds",
+   "name_full": "TMB-365",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "2M"
+   ],
+   "frequencies_full": [
+    "Every 2 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "on_hold": false,
+   "developers_full": [
+    "TaiMed Biologics"
+   ],
+   "drug_class": "CD4-directed post-attachment inhibitor mAb (second-generation ibalizumab)",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/compounds/tmb-365",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c050",
+   "band": "compounds",
+   "name_full": "CAP256V2LS (mAb)",
+   "routes": [
+    "SC",
+    "IV"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intravenous"
+   ],
+   "frequencies": [
+    "4M",
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 4 months",
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase II",
+   "on_hold": false,
+   "developers_full": [
+    "Centre for the AIDS Programme of Research in South Africa (CAPRISA)"
+   ],
+   "drug_class": "bNAb targeting the V1/V2 apex of the HIV-1 envelope trimer",
+   "class_group": "mAb",
+   "lapal_url": "https://lapal.ch/compounds/cap256v2ls-mab",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c051",
+   "band": "compounds",
+   "name_full": "Albuvirtide (ABT)",
+   "routes": [
+    "IV"
+   ],
+   "routes_full": [
+    "Intravenous"
+   ],
+   "frequencies": [
+    "1W",
+    "2W"
+   ],
+   "frequencies_full": [
+    "Weekly",
+    "Every 2 weeks"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Approved",
+   "highest_phase": "Phase IV",
+   "on_hold": true,
+   "developers_full": [
+    "Frontier Biotechnologies"
+   ],
+   "drug_class": "HIV entry inhibitor (gp41 fusion inhibitor)",
+   "class_group": "Fusion inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/albuvirtide",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c052",
+   "band": "compounds",
+   "name_full": "Lipovirtide (LP-80)",
+   "routes": [
+    "SC"
+   ],
+   "routes_full": [
+    "Subcutaneous"
+   ],
+   "frequencies": [
+    "1W",
+    "2W"
+   ],
+   "frequencies_full": [
+    "Weekly",
+    "Every 2 weeks"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase III",
+   "on_hold": true,
+   "developers_full": [
+    "Shanxi Kangbao Biological Product"
+   ],
+   "drug_class": "HIV fusion inhibitor (gp41 NHR-targeting lipopeptide)",
+   "class_group": "Fusion inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/lipovirtide-lp-80",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
    "flags": {
     "missing_frequency": false,
     "frequency_derived_from_trials": false,
