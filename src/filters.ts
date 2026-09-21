@@ -20,6 +20,12 @@
  * Bands       unlike the other facets, both bands start ON and the toggles turn
  *             them off, because the bands are a view structure rather than a
  *             filter over a long tail of values.
+ *
+ * Status      the same two-way toggle shape as bands: Active and On hold /
+ *             discontinued both start ON, and turning one off hides those
+ *             entries. Kept apart from the phase filter on purpose, because
+ *             on_hold is independent of highest_phase: a Phase III programme
+ *             can be on hold.
  */
 import type { Entry, Indication, Meta } from './types'
 import { LONG_INTERVAL_FROM, INJECTABLE_ROUTES, ORAL_ROUTE } from './encoding'
@@ -31,9 +37,20 @@ import { LONG_INTERVAL_FROM, INJECTABLE_ROUTES, ORAL_ROUTE } from './encoding'
  */
 export const NOT_STATED = '__not_stated__'
 
+/** Whether an entry is still being pursued. Derived from Entry.on_hold. */
+export type StatusKey = 'active' | 'on_hold'
+
+export const STATUS_KEYS: StatusKey[] = ['active', 'on_hold']
+
+export function statusOf(e: Entry): StatusKey {
+  return e.on_hold ? 'on_hold' : 'active'
+}
+
 export interface FilterState {
   indications: Set<Indication>
   bands: Set<string>
+  /** Both start ON; see the Status note above. */
+  statuses: Set<StatusKey>
   stages: Set<string>
   routes: Set<string>
   /** Interval codes, plus possibly NOT_STATED. */
@@ -49,6 +66,7 @@ export function defaultFilters(meta: Meta): FilterState {
   return {
     indications: new Set<Indication>(['Treatment', 'Prevention']),
     bands: new Set(Object.keys(meta.record_bands)),
+    statuses: new Set<StatusKey>(STATUS_KEYS),
     stages: new Set(),
     routes: new Set(),
     frequencies: new Set(),
@@ -61,6 +79,7 @@ export function isDefault(s: FilterState, meta: Meta): boolean {
   return (
     s.indications.size === 2 &&
     s.bands.size === Object.keys(meta.record_bands).length &&
+    s.statuses.size === STATUS_KEYS.length &&
     s.stages.size === 0 &&
     s.routes.size === 0 &&
     s.frequencies.size === 0 &&
@@ -74,6 +93,7 @@ export function activeCount(s: FilterState, meta: Meta): number {
   return (
     (s.indications.size < 2 ? 1 : 0) +
     (s.bands.size < Object.keys(meta.record_bands).length ? 1 : 0) +
+    (s.statuses.size < STATUS_KEYS.length ? 1 : 0) +
     s.stages.size +
     s.routes.size +
     s.frequencies.size +
@@ -84,7 +104,7 @@ export function activeCount(s: FilterState, meta: Meta): number {
 
 /* ---------------------------------------------------------------- predicate */
 
-type Dimension = 'indications' | 'bands' | FacetKey | 'search'
+type Dimension = 'indications' | 'bands' | 'statuses' | FacetKey | 'search'
 
 function matchesDimension(e: Entry, s: FilterState, dim: Dimension): boolean {
   switch (dim) {
@@ -95,6 +115,8 @@ function matchesDimension(e: Entry, s: FilterState, dim: Dimension): boolean {
       )
     case 'bands':
       return s.bands.has(e.band)
+    case 'statuses':
+      return s.statuses.has(statusOf(e))
     case 'stages':
       return s.stages.size === 0 || s.stages.has(e.stage)
     case 'routes':
@@ -120,6 +142,7 @@ function matchesDimension(e: Entry, s: FilterState, dim: Dimension): boolean {
 const ALL_DIMENSIONS: Dimension[] = [
   'indications',
   'bands',
+  'statuses',
   'stages',
   'routes',
   'frequencies',
@@ -207,7 +230,6 @@ export interface Summary {
   oral: number
   longInterval: number
   developers: number
-  intervalNotStated: number
 }
 
 /**
@@ -261,11 +283,6 @@ export function summaryFilter(
         apply: (s) => ({ ...s, frequencies: new Set(longCodes) }),
         isActive: (s) => sameSet(s.frequencies, longCodes),
       }
-    case 'intervalNotStated':
-      return {
-        apply: (s) => ({ ...s, frequencies: new Set([NOT_STATED]) }),
-        isActive: (s) => sameSet(s.frequencies, [NOT_STATED]),
-      }
     case 'total':
     case 'developers':
       return null
@@ -281,7 +298,6 @@ export function clearSummaryFilter(key: SummaryKey, s: FilterState): FilterState
     case 'oral':
       return { ...s, routes: new Set() }
     case 'longInterval':
-    case 'intervalNotStated':
       return { ...s, frequencies: new Set() }
     default:
       return s
@@ -304,6 +320,5 @@ export function summarise(entries: Entry[], meta: Meta): Summary {
     oral: entries.filter((e) => e.routes.includes(ORAL_ROUTE)).length,
     longInterval: entries.filter(isLong).length,
     developers: new Set(entries.flatMap((e) => e.developers_full)).size,
-    intervalNotStated: entries.filter((e) => e.flags.missing_frequency).length,
   }
 }

@@ -6,7 +6,8 @@
  * screen is the more frequent action. Indication and Entry type sit below:
  * both drive scope too, but each is a two-way toggle rather than a search or a
  * long facet list, so they read as a smaller, second decision rather than
- * competing with the row above for attention.
+ * competing with the row above for attention. Status joins them once any entry
+ * in the dataset is on hold, for the same reason.
  */
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -14,6 +15,7 @@ import type { Band, Entry, Indication, Meta } from '../types'
 import {
   type FacetKey,
   type FilterState,
+  type StatusKey,
   activeCount,
   defaultFilters,
   facetOptions,
@@ -49,6 +51,11 @@ export function Filters({
   setState: (update: (s: FilterState) => FilterState) => void
 }) {
   const active = activeCount(state, meta)
+  // Offered only when there is something to hide, the same rule the legend
+  // follows: a control for a state that appears nowhere is just clutter. Read
+  // from the full dataset, not the filtered one, so the toggles do not vanish
+  // the moment they are used to hide the very entries that justify them.
+  const hasOnHold = entries.some((e) => e.on_hold)
 
   const toggleIn = <T,>(set: Set<T>, v: T): Set<T> => {
     const next = new Set(set)
@@ -128,6 +135,33 @@ export function Filters({
             {BAND_LABEL[band] ?? band}
           </Toggle>
         ))}
+
+        {hasOnHold && (
+          <>
+            <span className="mx-1 hidden h-5 w-px bg-hairline sm:block" />
+
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
+              Status
+            </span>
+            {(
+              [
+                ['active', 'Active', 'var(--color-accent)'],
+                // Near-black rather than the soft grey the on-hold chip uses:
+                // a toggle needs its on and off states to be easy to tell apart.
+                ['on_hold', meta.on_hold_label ?? 'On hold / discontinued', 'var(--color-ink)'],
+              ] as [StatusKey, string, string][]
+            ).map(([key, label, accent]) => (
+              <Toggle
+                key={key}
+                on={state.statuses.has(key)}
+                accent={accent}
+                onClick={() => setState((s) => ({ ...s, statuses: toggleIn(s.statuses, key) }))}
+              >
+                {label}
+              </Toggle>
+            ))}
+          </>
+        )}
 
         <span className="flex-1" />
 

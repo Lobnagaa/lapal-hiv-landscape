@@ -46,7 +46,7 @@ export function Summary({
     },
     {
       key: 'oral',
-      label: 'Has oral route',
+      label: 'Have oral route',
       hint: 'Has an oral route recorded, often alongside a long-acting one',
     },
     {
@@ -59,17 +59,12 @@ export function Summary({
       label: 'Developers',
       hint: 'Distinct organisations across the entries in view',
     },
-    {
-      key: 'intervalNotStated',
-      label: 'Interval not stated',
-      hint: 'Shown in the not-stated lane, never dropped',
-    },
   ]
 
   return (
     <section
       aria-label="At a glance"
-      className="grid grid-cols-2 gap-px border-y border-hairline bg-hairline sm:grid-cols-4 lg:grid-cols-7"
+      className="grid grid-cols-2 gap-px border-y border-hairline bg-hairline sm:grid-cols-3 lg:grid-cols-6"
     >
       {tiles.map((t) => {
         const spec = summaryFilter(t.key, meta)

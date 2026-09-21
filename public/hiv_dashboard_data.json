@@ -178,7 +178,7 @@
   "dual_use_note": "Entries indicated for both treatment and prevention appear once, tagged Both.",
   "disclaimer": "LAPaL reflects a curated snapshot at a point in time. Efforts are put to refresh content on a rolling basis as new public information appears.",
   "curation": {
-   "excluded_count": 16,
+   "excluded_count": 11,
    "excluded": [
     {
      "id": "f003",
@@ -216,16 +216,6 @@
      "reason": null
     },
     {
-     "id": "f025",
-     "name_full": "Ultra-Long-Acting Dimeric Bictegravir Prodrug",
-     "reason": null
-    },
-    {
-     "id": "f029",
-     "name_full": "Bictegravir-PLGA nanoformulation",
-     "reason": null
-    },
-    {
      "id": "c033",
      "name_full": "Cabotegravir",
      "reason": null
@@ -233,16 +223,6 @@
     {
      "id": "c034",
      "name_full": "Islatravir",
-     "reason": null
-    },
-    {
-     "id": "c037",
-     "name_full": "VH-310 (VH-4367310; cabotegravir stearate; XVIR-110)",
-     "reason": null
-    },
-    {
-     "id": "c038",
-     "name_full": "Lenacapavir pacfosacil (GS-4182)",
      "reason": null
     },
     {
@@ -254,11 +234,6 @@
      "id": "c043",
      "name_full": "Depulfavirine nanosphere LAI",
      "reason": null
-    },
-    {
-     "id": "c053",
-     "name_full": "GS-1219",
-     "reason": "Discontinued"
     }
    ]
   },
@@ -295,7 +270,7 @@
    "NRTTI + NNRTI"
   ],
   "known_data_issues": [
-   "1 entries have no recorded dosing interval.",
+   "2 entries have no recorded dosing interval.",
    "Approved but missing regulatory rows: Dapivirine ring monthly."
   ]
  },
@@ -406,7 +381,7 @@
     "Monthly",
     "Every 2 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Approved",
    "highest_phase": "Phase IV",
    "on_hold": false,
@@ -433,7 +408,7 @@
   },
   {
    "id": "f005",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "Lotivibart (N6LS) (VH3810109) (mAb)",
    "routes": [
     "IV"
@@ -449,7 +424,7 @@
     "Every 4 months",
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase II",
    "on_hold": false,
@@ -491,7 +466,7 @@
    "frequencies_full": [
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -533,7 +508,7 @@
     "Every 2 weeks",
     "Monthly"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Preclinical",
    "on_hold": false,
@@ -559,7 +534,7 @@
   },
   {
    "id": "f008",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "Ibalizumab",
    "routes": [
     "SC",
@@ -577,7 +552,7 @@
    "frequencies_full": [
     "Every 2 weeks"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Approved",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -604,7 +579,7 @@
   },
   {
    "id": "f009",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "Budigalimab",
    "routes": [
     "IV"
@@ -646,7 +621,7 @@
   },
   {
    "id": "f010",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "VRC07-523LS (mAb) (TMB-380)",
    "routes": [
     "SC",
@@ -670,7 +645,7 @@
     "Every 4 months",
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase II",
    "on_hold": false,
@@ -715,7 +690,7 @@
     "Every 2 months",
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -863,7 +838,7 @@
   },
   {
    "id": "f019",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "VRC01 (mAb)",
    "routes": [
     "SC",
@@ -925,7 +900,7 @@
    "frequencies_full": [
     "Weekly"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase II/III",
    "on_hold": false,
@@ -951,7 +926,7 @@
   },
   {
    "id": "f023",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "PGDM1400 (mAb)",
    "routes": [
     "IV"
@@ -1028,6 +1003,46 @@
     "derived_frequency_needs_review": false,
     "conventional_approval_only": false,
     "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "f025",
+   "band": "formulations",
+   "name_full": "Ultra-Long-Acting Dimeric Bictegravir Prodrug",
+   "routes": [
+    "IM"
+   ],
+   "routes_full": [
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "6M"
+   ],
+   "frequencies_full": [
+    "Every 6 months"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "on_hold": false,
+   "developers_full": [
+    "University of Nebraska Medical Center"
+   ],
+   "drug_class": "INSTI",
+   "class_group": "INSTI",
+   "lapal_url": "https://lapal.ch/formulations/ultra-long-acting-dimeric-bictegravir-prodrug",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
     "approved_but_no_regulatory_rows": false
    }
   },
@@ -1158,6 +1173,42 @@
    }
   },
   {
+   "id": "f029",
+   "band": "formulations",
+   "name_full": "Bictegravir-PLGA nanoformulation",
+   "routes": [
+    "SC"
+   ],
+   "routes_full": [
+    "Subcutaneous"
+   ],
+   "frequencies": [],
+   "frequencies_full": [],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Preclinical",
+   "on_hold": false,
+   "developers_full": [
+    "Creighton University"
+   ],
+   "drug_class": "INSTI",
+   "class_group": "INSTI",
+   "lapal_url": "https://lapal.ch/formulations/bictegravir-plga-nanoformulation",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": true,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": true,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
    "id": "c030",
    "band": "compounds",
    "name_full": "Ulonivirine (MK-8507)",
@@ -1213,7 +1264,7 @@
    "frequencies_full": [
     "Weekly"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase II/III",
    "on_hold": false,
@@ -1253,7 +1304,7 @@
    "frequencies_full": [
     "Monthly"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Approved",
    "highest_phase": "Phase IV",
    "on_hold": false,
@@ -1275,6 +1326,91 @@
     "conventional_approval_only": false,
     "no_linked_trials": false,
     "approved_but_no_regulatory_rows": true
+   }
+  },
+  {
+   "id": "c037",
+   "band": "compounds",
+   "name_full": "VH-310 (VH-4367310; cabotegravir stearate; XVIR-110)",
+   "routes": [
+    "SC",
+    "IM"
+   ],
+   "routes_full": [
+    "Subcutaneous",
+    "Intramuscular"
+   ],
+   "frequencies": [
+    "6M",
+    "12M"
+   ],
+   "frequencies_full": [
+    "Every 6 months",
+    "Yearly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "on_hold": false,
+   "developers_full": [
+    "Exavir Therapeutics",
+    "ViiV Healthcare"
+   ],
+   "drug_class": "Prodrug of cabotegravir (INSTI)",
+   "class_group": "INSTI",
+   "lapal_url": "https://lapal.ch/compounds/vh-310-vh-4367310",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Both",
+   "is_treatment": true,
+   "is_prevention": true,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c038",
+   "band": "compounds",
+   "name_full": "Lenacapavir pacfosacil (GS-4182)",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W"
+   ],
+   "frequencies_full": [
+    "Weekly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Late-stage",
+   "highest_phase": "Phase II/III",
+   "on_hold": false,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "capsid inhibitor",
+   "class_group": "Capsid inhibitor",
+   "lapal_url": "https://lapal.ch/compounds/lenacapavir-pacfosacil-gs-4182",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
    }
   },
   {
@@ -1516,7 +1652,7 @@
    "frequencies_full": [
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase II",
    "on_hold": false,
@@ -1558,7 +1694,7 @@
     "Every 4 months",
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase I",
    "on_hold": false,
@@ -1598,7 +1734,7 @@
    "frequencies_full": [
     "Every 4 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -1639,7 +1775,7 @@
    "frequencies_full": [
     "Every 3 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase II/III",
    "on_hold": false,
@@ -1705,7 +1841,7 @@
   },
   {
    "id": "f035",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "VH-079 (VH4527079)",
    "routes": [
     "SC",
@@ -1721,7 +1857,7 @@
    "frequencies_full": [
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase I",
    "on_hold": false,
@@ -1747,7 +1883,7 @@
   },
   {
    "id": "f036",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "10E8.4/iMab",
    "routes": [
     "SC",
@@ -1759,7 +1895,7 @@
    ],
    "frequencies": [],
    "frequencies_full": [],
-   "frequency_provenance": "not stated",
+   "frequency_provenance": "LAPaL record",
    "stage": "Early-stage",
    "highest_phase": "Phase I",
    "on_hold": false,
@@ -1785,7 +1921,7 @@
   },
   {
    "id": "f037",
-   "band": "formulations",
+   "band": "compounds",
    "name_full": "Semzuvolimab (UB-421)",
    "routes": [
     "SC",
@@ -1889,7 +2025,7 @@
    "frequencies_full": [
     "Every 6 months"
    ],
-   "frequency_provenance": "manually confirmed",
+   "frequency_provenance": "LAPaL record",
    "stage": "Late-stage",
    "highest_phase": "Phase III",
    "on_hold": false,
@@ -2109,6 +2245,48 @@
    "drug_class": "HIV fusion inhibitor (gp41 NHR-targeting lipopeptide)",
    "class_group": "Fusion inhibitor",
    "lapal_url": "https://lapal.ch/compounds/lipovirtide-lp-80",
+   "display_order": null,
+   "therapeutic_areas": "HIV",
+   "use_case_raw": "Treatment",
+   "is_treatment": true,
+   "is_prevention": false,
+   "flags": {
+    "missing_frequency": false,
+    "frequency_derived_from_trials": false,
+    "derived_frequency_needs_review": false,
+    "conventional_approval_only": false,
+    "no_linked_trials": false,
+    "approved_but_no_regulatory_rows": false
+   }
+  },
+  {
+   "id": "c053",
+   "band": "compounds",
+   "name_full": "GS-1219",
+   "routes": [
+    "PO"
+   ],
+   "routes_full": [
+    "Oral"
+   ],
+   "frequencies": [
+    "1W",
+    "1M"
+   ],
+   "frequencies_full": [
+    "Weekly",
+    "Monthly"
+   ],
+   "frequency_provenance": "LAPaL record",
+   "stage": "Early-stage",
+   "highest_phase": "Phase I",
+   "on_hold": true,
+   "developers_full": [
+    "Gilead"
+   ],
+   "drug_class": "INSTI",
+   "class_group": "INSTI",
+   "lapal_url": "https://lapal.ch/compounds/gs-1219",
    "display_order": null,
    "therapeutic_areas": "HIV",
    "use_case_raw": "Treatment",

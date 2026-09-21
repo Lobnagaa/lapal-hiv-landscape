@@ -5,9 +5,10 @@ dist/
 .vite/
 *.tsbuildinfo
 
-# Manual and scripted backup copies of the workbook. Local only: git is the
+# Manual and scripted backup copies of the workbook, however they are named
+# (hiv_curation.backup-..., hiv_curation-backup20sept2026.xlsx). Local only: git is the
 # version history once hiv_curation.xlsx itself is committed.
-hiv_curation.backup-*.xlsx
+hiv_curation*backup*.xlsx
 hiv_curation-original*.xlsx
 
 # The single-file review copy is a build artefact, regenerated on demand.
